@@ -71,6 +71,53 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-Caffe conv layer forward源码阅读" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/19/Caffe%20conv%20layer%20forward%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/" class="article-date">
+  <time class="dt-published" datetime="2021-07-19T08:47:52.000Z" itemprop="datePublished">2021-07-19</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/07/19/Caffe%20conv%20layer%20forward%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/">Caffe conv layer forward源码阅读</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>阅读了caffe中conv layer forward部分的源码</p>
+<p>了解了整个卷积层前向传播在源码层面的具体实现</p>
+<h2 id="1-forward"><a href="#1-forward" class="headerlink" title="1. forward"></a>1. forward</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> ConvolutionLayer&lt;Dtype&gt;::<span class="built_in">Forward_cpu</span>(<span class="keyword">const</span> vector&lt;Blob&lt;Dtype&gt;*&gt;&amp; bottom,</span><br><span class="line">      <span class="keyword">const</span> vector&lt;Blob&lt;Dtype&gt;*&gt;&amp; top) &#123;</span><br><span class="line">    <span class="comment">//vector&lt;shared_ptr&lt;Blob&lt;Dtype&gt; &gt; &gt; blobs_;</span></span><br><span class="line">    <span class="comment">//blobs_[0]存储了weight，blobs_[1]存储了bias</span></span><br><span class="line">  <span class="keyword">const</span> Dtype* weight = <span class="keyword">this</span>-&gt;blobs_[<span class="number">0</span>]-&gt;<span class="built_in">cpu_data</span>();</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; bottom.<span class="built_in">size</span>(); ++i) &#123;</span><br><span class="line">    <span class="keyword">const</span> Dtype* bottom_data = bottom[i]-&gt;<span class="built_in">cpu_data</span>();</span><br><span class="line">    Dtype* top_data = top[i]-&gt;<span class="built_in">mutable_cpu_data</span>();</span><br><span class="line">     <span class="comment">//------------此处为一次conv op的开始--------// </span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> n = <span class="number">0</span>; n &lt; <span class="keyword">this</span>-&gt;num_; ++n) &#123;</span><br><span class="line">      <span class="keyword">this</span>-&gt;forward_cpu_gemm(bottom_data + n * <span class="keyword">this</span>-&gt;bottom_dim_, weight,</span><br><span class="line">          top_data + n * <span class="keyword">this</span>-&gt;top_dim_);</span><br><span class="line">      <span class="keyword">if</span> (<span class="keyword">this</span>-&gt;bias_term_) &#123;</span><br><span class="line">        <span class="keyword">const</span> Dtype* bias = <span class="keyword">this</span>-&gt;blobs_[<span class="number">1</span>]-&gt;<span class="built_in">cpu_data</span>();</span><br><span class="line">        <span class="keyword">this</span>-&gt;forward_cpu_bias(top_data + n * <span class="keyword">this</span>-&gt;top_dim_, bias);</span><br><span class="line">     <span class="comment">//------------此处为一次conv op的结束----------// </span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        
+          <p class="article-more-link">
+            <a href="/2021/07/19/Caffe%20conv%20layer%20forward%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/19/Caffe%20conv%20layer%20forward%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/" data-id="ckrae6jtg0001wgumg7ap4ri7" data-title="Caffe conv layer forward源码阅读" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag">深度学习</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-hello-world" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/07/16/hello-world/" class="article-date">
@@ -110,7 +157,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/07/16/hello-world/" data-id="ckr62c26h0001b0um9ezbgu0q" data-title="Hello World" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/07/16/hello-world/" data-id="ckrae6jtr0002wgumbu14d4hb" data-title="Hello World" class="article-share-link">Share</a>
       
       
       
@@ -132,9 +179,23 @@
 
   
     
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag">深度学习</a></li></ul>
+    </div>
+  </div>
+
 
   
     
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" style="font-size: 10px;">深度学习</a>
+    </div>
+  </div>
+
   
     
   <div class="widget-wrap">
@@ -151,6 +212,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2021/07/19/Caffe%20conv%20layer%20forward%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/">Caffe conv layer forward源码阅读</a>
+          </li>
         
           <li>
             <a href="/2021/07/16/hello-world/">Hello World</a>

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Caffe conv layer forward源码阅读 | Living in the Current</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="阅读了caffe中conv layer forward部分的源码 了解了整个卷积层前向传播在源码层面的具体实现 1. forward1234567891011121314151617181920void ConvolutionLayer&lt;Dtype&gt;::Forward_cpu(const vector&lt;Blob&lt;Dtype&gt;*&gt;&amp; bottom,">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Caffe conv layer forward源码阅读">
+<meta property="og:url" content="http://example.com/2021/07/19/Caffe%20conv%20layer%20forward%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/index.html">
+<meta property="og:site_name" content="Living in the Current">
+<meta property="og:description" content="阅读了caffe中conv layer forward部分的源码 了解了整个卷积层前向传播在源码层面的具体实现 1. forward1234567891011121314151617181920void ConvolutionLayer&lt;Dtype&gt;::Forward_cpu(const vector&lt;Blob&lt;Dtype&gt;*&gt;&amp; bottom,">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-07-19T08:47:52.000Z">
+<meta property="article:modified_time" content="2021-07-19T08:54:31.270Z">
+<meta property="article:author" content="Chas">
+<meta property="article:tag" content="深度学习">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Living in the Current" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Living in the Current</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-Caffe conv layer forward源码阅读" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/19/Caffe%20conv%20layer%20forward%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/" class="article-date">
+  <time class="dt-published" datetime="2021-07-19T08:47:52.000Z" itemprop="datePublished">2021-07-19</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Caffe conv layer forward源码阅读
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>阅读了caffe中conv layer forward部分的源码</p>
+<p>了解了整个卷积层前向传播在源码层面的具体实现</p>
+<h2 id="1-forward"><a href="#1-forward" class="headerlink" title="1. forward"></a>1. forward</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> ConvolutionLayer&lt;Dtype&gt;::<span class="built_in">Forward_cpu</span>(<span class="keyword">const</span> vector&lt;Blob&lt;Dtype&gt;*&gt;&amp; bottom,</span><br><span class="line">      <span class="keyword">const</span> vector&lt;Blob&lt;Dtype&gt;*&gt;&amp; top) &#123;</span><br><span class="line">    <span class="comment">//vector&lt;shared_ptr&lt;Blob&lt;Dtype&gt; &gt; &gt; blobs_;</span></span><br><span class="line">    <span class="comment">//blobs_[0]存储了weight，blobs_[1]存储了bias</span></span><br><span class="line">  <span class="keyword">const</span> Dtype* weight = <span class="keyword">this</span>-&gt;blobs_[<span class="number">0</span>]-&gt;<span class="built_in">cpu_data</span>();</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; bottom.<span class="built_in">size</span>(); ++i) &#123;</span><br><span class="line">    <span class="keyword">const</span> Dtype* bottom_data = bottom[i]-&gt;<span class="built_in">cpu_data</span>();</span><br><span class="line">    Dtype* top_data = top[i]-&gt;<span class="built_in">mutable_cpu_data</span>();</span><br><span class="line">     <span class="comment">//------------此处为一次conv op的开始--------// </span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> n = <span class="number">0</span>; n &lt; <span class="keyword">this</span>-&gt;num_; ++n) &#123;</span><br><span class="line">      <span class="keyword">this</span>-&gt;forward_cpu_gemm(bottom_data + n * <span class="keyword">this</span>-&gt;bottom_dim_, weight,</span><br><span class="line">          top_data + n * <span class="keyword">this</span>-&gt;top_dim_);</span><br><span class="line">      <span class="keyword">if</span> (<span class="keyword">this</span>-&gt;bias_term_) &#123;</span><br><span class="line">        <span class="keyword">const</span> Dtype* bias = <span class="keyword">this</span>-&gt;blobs_[<span class="number">1</span>]-&gt;<span class="built_in">cpu_data</span>();</span><br><span class="line">        <span class="keyword">this</span>-&gt;forward_cpu_bias(top_data + n * <span class="keyword">this</span>-&gt;top_dim_, bias);</span><br><span class="line">     <span class="comment">//------------此处为一次conv op的结束----------// </span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+<h2 id="2-卷积计算"><a href="#2-卷积计算" class="headerlink" title="2.卷积计算"></a>2.卷积计算</h2><h3 id="卷积"><a href="#卷积" class="headerlink" title="卷积"></a>卷积</h3><p>即<code>forward_cpu_gemm</code>()</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//im2col+gemm</span></span><br><span class="line"><span class="keyword">void</span> BaseConvolutionLayer&lt;Dtype&gt;::forward_cpu_gemm(<span class="keyword">const</span> Dtype* input,</span><br><span class="line">    <span class="keyword">const</span> Dtype* weights, Dtype* output, <span class="keyword">bool</span> skip_im2col) &#123;</span><br><span class="line">  <span class="keyword">const</span> Dtype* col_buff = input;</span><br><span class="line">  <span class="keyword">if</span> (!is_1x1_) &#123;</span><br><span class="line">    <span class="keyword">if</span> (!skip_im2col) &#123;</span><br><span class="line">      <span class="built_in">conv_im2col_cpu</span>(input, col_buffer_.<span class="built_in">mutable_cpu_data</span>());</span><br><span class="line">    &#125;</span><br><span class="line">    col_buff = col_buffer_.<span class="built_in">cpu_data</span>();</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> g = <span class="number">0</span>; g &lt; group_; ++g) &#123;</span><br><span class="line">    caffe_cpu_gemm&lt;Dtype&gt;(CblasNoTrans, CblasNoTrans, conv_out_channels_ /</span><br><span class="line">        group_, conv_out_spatial_dim_, kernel_dim_,</span><br><span class="line">        (Dtype)<span class="number">1.</span>, weights + weight_offset_ * g, col_buff + col_offset_ * g,</span><br><span class="line">        (Dtype)<span class="number">0.</span>, output + output_offset_ * g);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="im2col"><a href="#im2col" class="headerlink" title="im2col"></a>im2col</h4><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">inline</span> <span class="keyword">void</span> <span class="title">conv_im2col_cpu</span><span class="params">(<span class="keyword">const</span> Dtype* data, Dtype* col_buff)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (!force_nd_im2col_ &amp;&amp; num_spatial_axes_ == <span class="number">2</span>) &#123;</span><br><span class="line">    <span class="built_in">im2col_cpu</span>(data, conv_in_channels_,</span><br><span class="line">        conv_input_shape_.<span class="built_in">cpu_data</span>()[<span class="number">1</span>], conv_input_shape_.<span class="built_in">cpu_data</span>()[<span class="number">2</span>],</span><br><span class="line">        kernel_shape_.<span class="built_in">cpu_data</span>()[<span class="number">0</span>], kernel_shape_.<span class="built_in">cpu_data</span>()[<span class="number">1</span>],</span><br><span class="line">        pad_.<span class="built_in">cpu_data</span>()[<span class="number">0</span>], pad_.<span class="built_in">cpu_data</span>()[<span class="number">1</span>],</span><br><span class="line">        stride_.<span class="built_in">cpu_data</span>()[<span class="number">0</span>], stride_.<span class="built_in">cpu_data</span>()[<span class="number">1</span>],</span><br><span class="line">        dilation_.<span class="built_in">cpu_data</span>()[<span class="number">0</span>], dilation_.<span class="built_in">cpu_data</span>()[<span class="number">1</span>], col_buff);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="built_in">im2col_nd_cpu</span>(data, num_spatial_axes_, conv_input_shape_.<span class="built_in">cpu_data</span>(),</span><br><span class="line">        col_buffer_shape_.<span class="built_in">data</span>(), kernel_shape_.<span class="built_in">cpu_data</span>(),</span><br><span class="line">        pad_.<span class="built_in">cpu_data</span>(), stride_.<span class="built_in">cpu_data</span>(), dilation_.<span class="built_in">cpu_data</span>(), col_buff);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">im2col_cpu</span><span class="params">(<span class="keyword">const</span> Dtype* data_im, <span class="keyword">const</span> <span class="keyword">int</span> channels,</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="keyword">const</span> <span class="keyword">int</span> height, <span class="keyword">const</span> <span class="keyword">int</span> width, <span class="keyword">const</span> <span class="keyword">int</span> kernel_h, <span class="keyword">const</span> <span class="keyword">int</span> kernel_w,</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="keyword">const</span> <span class="keyword">int</span> pad_h, <span class="keyword">const</span> <span class="keyword">int</span> pad_w,</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="keyword">const</span> <span class="keyword">int</span> stride_h, <span class="keyword">const</span> <span class="keyword">int</span> stride_w,</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="keyword">const</span> <span class="keyword">int</span> dilation_h, <span class="keyword">const</span> <span class="keyword">int</span> dilation_w,</span></span></span><br><span class="line"><span class="params"><span class="function">    Dtype* data_col)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">const</span> <span class="keyword">int</span> output_h = (height + <span class="number">2</span> * pad_h -</span><br><span class="line">    (dilation_h * (kernel_h - <span class="number">1</span>) + <span class="number">1</span>)) / stride_h + <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">const</span> <span class="keyword">int</span> output_w = (width + <span class="number">2</span> * pad_w -</span><br><span class="line">    (dilation_w * (kernel_w - <span class="number">1</span>) + <span class="number">1</span>)) / stride_w + <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">const</span> <span class="keyword">int</span> channel_size = height * width;</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> channel = channels; channel--; data_im += channel_size) &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> kernel_row = <span class="number">0</span>; kernel_row &lt; kernel_h; kernel_row++) &#123;</span><br><span class="line">      <span class="keyword">for</span> (<span class="keyword">int</span> kernel_col = <span class="number">0</span>; kernel_col &lt; kernel_w; kernel_col++) &#123;</span><br><span class="line">        <span class="keyword">int</span> input_row = -pad_h + kernel_row * dilation_h;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> output_rows = output_h; output_rows; output_rows--) &#123;</span><br><span class="line">          <span class="keyword">if</span> (!<span class="built_in">is_a_ge_zero_and_a_lt_b</span>(input_row, height)) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> output_cols = output_w; output_cols; output_cols--) &#123;</span><br><span class="line">              *(data_col++) = <span class="number">0</span>;</span><br><span class="line">            &#125;</span><br><span class="line">          &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">int</span> input_col = -pad_w + kernel_col * dilation_w;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> output_col = output_w; output_col; output_col--) &#123;</span><br><span class="line">              <span class="keyword">if</span> (<span class="built_in">is_a_ge_zero_and_a_lt_b</span>(input_col, width)) &#123;</span><br><span class="line">                *(data_col++) = data_im[input_row * width + input_col];</span><br><span class="line">              &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                *(data_col++) = <span class="number">0</span>;</span><br><span class="line">              &#125;</span><br><span class="line">              input_col += stride_w;</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">          input_row += stride_h;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="加偏置"><a href="#加偏置" class="headerlink" title="加偏置"></a>加偏置</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> BaseConvolutionLayer&lt;Dtype&gt;::forward_cpu_bias(Dtype* output,</span><br><span class="line">    <span class="keyword">const</span> Dtype* bias) &#123;</span><br><span class="line">  caffe_cpu_gemm&lt;Dtype&gt;(CblasNoTrans, CblasNoTrans, num_output_,</span><br><span class="line">      out_spatial_dim_, <span class="number">1</span>, (Dtype)<span class="number">1.</span>, bias, bias_multiplier_.<span class="built_in">cpu_data</span>(),</span><br><span class="line">      (Dtype)<span class="number">1.</span>, output);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-使用线性代数计算库CBLAS"><a href="#3-使用线性代数计算库CBLAS" class="headerlink" title="3. 使用线性代数计算库CBLAS"></a>3. 使用线性代数计算库CBLAS</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> caffe_cpu_gemm&lt;<span class="keyword">double</span>&gt;(<span class="keyword">const</span> CBLAS_TRANSPOSE TransA,</span><br><span class="line">    <span class="keyword">const</span> CBLAS_TRANSPOSE TransB, <span class="keyword">const</span> <span class="keyword">int</span> M, <span class="keyword">const</span> <span class="keyword">int</span> N, <span class="keyword">const</span> <span class="keyword">int</span> K,</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">double</span> alpha, <span class="keyword">const</span> <span class="keyword">double</span>* A, <span class="keyword">const</span> <span class="keyword">double</span>* B, <span class="keyword">const</span> <span class="keyword">double</span> beta,</span><br><span class="line">    <span class="keyword">double</span>* C) &#123;</span><br><span class="line">  <span class="keyword">int</span> lda = (TransA == CblasNoTrans) ? K : M;</span><br><span class="line">  <span class="keyword">int</span> ldb = (TransB == CblasNoTrans) ? N : K;</span><br><span class="line">  <span class="built_in">cblas_dgemm</span>(CblasRowMajor, TransA, TransB, M, N, K, alpha, A, lda, B,</span><br><span class="line">      ldb, beta, C, N);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>BLAS(Basic Linear Algebra Subprograms基础线性代数程序集)是进行向量和矩阵等基本线性代数操作的事实上的数值库。这些程序最早在1979年发布，是LAPACK(Linear Algebra PACKage)的一部分，便于建立功能更强的数值程序包。BLAS库在高性能计算中被广泛应用，由此衍生出大量优化版本，如Intel的Intel MKL，AMD的ACML，Goto BLAS和ATLAS等非硬件厂商优化版本，以及利用GPU计算技术实现的CUBLAS等。</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">cblas_dgemm</span><span class="params">(OPENBLAS_CONST <span class="keyword">enum</span> CBLAS_ORDER Order, OPENBLAS_CONST <span class="keyword">enum</span> CBLAS_TRANSPOSE TransA, OPENBLAS_CONST <span class="keyword">enum</span> CBLAS_TRANSPOSE TransB, OPENBLAS_CONST blasint M, OPENBLAS_CONST blasint N, OPENBLAS_CONST blasint K,</span></span></span><br><span class="line"><span class="params"><span class="function">                 OPENBLAS_CONST <span class="keyword">double</span> alpha, OPENBLAS_CONST <span class="keyword">double</span> *A, OPENBLAS_CONST blasint lda, OPENBLAS_CONST <span class="keyword">double</span> *B, OPENBLAS_CONST blasint ldb, OPENBLAS_CONST <span class="keyword">double</span> beta, <span class="keyword">double</span> *C, OPENBLAS_CONST blasint ldc)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>cblas_dgemm是该库中函数之一，用于实现双精度矩阵乘法，函数原型挺复杂</p>
+<p>简单理解就是实现 算式**C=alpha*A*B+beta*C **</p>
+<h2 id="4-总结"><a href="#4-总结" class="headerlink" title="4.总结"></a>4.总结</h2><ul>
+<li><p>step1. 非1x1卷积核的input进行一次im2col</p>
+</li>
+<li><p>step2.  input与weight通过cblas_dgemm()的矩阵乘法实现卷积计算</p>
+</li>
+<li><p>step3. output与weight通过cblas_dgemm()的矩阵乘法实现加偏置</p>
+</li>
+</ul>
+<h2 id="全连接也是通过矩阵乘法实现"><a href="#全连接也是通过矩阵乘法实现" class="headerlink" title="全连接也是通过矩阵乘法实现"></a>全连接也是通过矩阵乘法实现</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> InnerProductLayer&lt;Dtype&gt;::<span class="built_in">Forward_cpu</span>(<span class="keyword">const</span> vector&lt;Blob&lt;Dtype&gt;*&gt;&amp; bottom,</span><br><span class="line">    <span class="keyword">const</span> vector&lt;Blob&lt;Dtype&gt;*&gt;&amp; top) &#123;</span><br><span class="line">  <span class="keyword">const</span> Dtype* bottom_data = bottom[<span class="number">0</span>]-&gt;<span class="built_in">cpu_data</span>();</span><br><span class="line">  Dtype* top_data = top[<span class="number">0</span>]-&gt;<span class="built_in">mutable_cpu_data</span>();</span><br><span class="line">  <span class="keyword">const</span> Dtype* weight = <span class="keyword">this</span>-&gt;blobs_[<span class="number">0</span>]-&gt;<span class="built_in">cpu_data</span>();</span><br><span class="line">  caffe_cpu_gemm&lt;Dtype&gt;(CblasNoTrans, transpose_ ? CblasNoTrans : CblasTrans,</span><br><span class="line">      M_, N_, K_, (Dtype)<span class="number">1.</span>,</span><br><span class="line">      bottom_data, weight, (Dtype)<span class="number">0.</span>, top_data);</span><br><span class="line">  <span class="keyword">if</span> (bias_term_) &#123;</span><br><span class="line">    caffe_cpu_gemm&lt;Dtype&gt;(CblasNoTrans, CblasNoTrans, M_, N_, <span class="number">1</span>, (Dtype)<span class="number">1.</span>,</span><br><span class="line">        bias_multiplier_.<span class="built_in">cpu_data</span>(),</span><br><span class="line">        <span class="keyword">this</span>-&gt;blobs_[<span class="number">1</span>]-&gt;<span class="built_in">cpu_data</span>(), (Dtype)<span class="number">1.</span>, top_data);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/19/Caffe%20conv%20layer%20forward%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/" data-id="ckrae6jtg0001wgumg7ap4ri7" data-title="Caffe conv layer forward源码阅读" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag">深度学习</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2021/07/16/hello-world/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Hello World</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag">深度学习</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" style="font-size: 10px;">深度学习</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2021/07/19/Caffe%20conv%20layer%20forward%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/">Caffe conv layer forward源码阅读</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/16/hello-world/">Hello World</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2021 Chas<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
