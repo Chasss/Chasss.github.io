@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Caffe源码阅读1-基本代码结构总览 | Living in the Current</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="依赖库LevelDB库它是google实现的一个非常高效的Key-Value数据库。它是单进程的服务，性能非常高。它只是一个C&#x2F;C++编程语言的库，不包含网络服务封装。caffe主要使用该数据库来存储传入训练的图片数据与label。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Caffe源码阅读1-基本代码结构总览">
+<meta property="og:url" content="http://example.com/2021/06/20/Caffe%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB1-%E5%9F%BA%E6%9C%AC%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84%E6%80%BB%E8%A7%88/index.html">
+<meta property="og:site_name" content="Living in the Current">
+<meta property="og:description" content="依赖库LevelDB库它是google实现的一个非常高效的Key-Value数据库。它是单进程的服务，性能非常高。它只是一个C&#x2F;C++编程语言的库，不包含网络服务封装。caffe主要使用该数据库来存储传入训练的图片数据与label。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/Caffe%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB1-%E5%9F%BA%E6%9C%AC%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84%E6%80%BB%E8%A7%88/20160107090227464-1626774734016">
+<meta property="og:image" content="http://example.com/images/Caffe%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB1-%E5%9F%BA%E6%9C%AC%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84%E6%80%BB%E8%A7%88/20160107090630061-1626774738059">
+<meta property="og:image" content="http://example.com/images/Caffe%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB1-%E5%9F%BA%E6%9C%AC%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84%E6%80%BB%E8%A7%88/20180605192542858-1626774743669">
+<meta property="og:image" content="http://example.com/images/Caffe%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB1-%E5%9F%BA%E6%9C%AC%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84%E6%80%BB%E8%A7%88/20180606214549698-1626774754996">
+<meta property="article:published_time" content="2021-06-20T09:16:16.000Z">
+<meta property="article:modified_time" content="2021-07-20T10:04:48.325Z">
+<meta property="article:author" content="Chas">
+<meta property="article:tag" content="深度学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/Caffe%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB1-%E5%9F%BA%E6%9C%AC%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84%E6%80%BB%E8%A7%88/20160107090227464-1626774734016">
+  
+    <link rel="alternate" href="/atom.xml" title="Living in the Current" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Living in the Current</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-Caffe源码阅读1-基本代码结构总览" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/06/20/Caffe%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB1-%E5%9F%BA%E6%9C%AC%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84%E6%80%BB%E8%A7%88/" class="article-date">
+  <time class="dt-published" datetime="2021-06-20T09:16:16.000Z" itemprop="datePublished">2021-06-20</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Caffe源码阅读1-基本代码结构总览
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="依赖库"><a href="#依赖库" class="headerlink" title="依赖库"></a>依赖库</h2><p><strong>LevelDB库</strong><br>它是google实现的一个非常高效的Key-Value数据库。它是单进程的服务，性能非常高。它只是一个C/C++编程语言的库，不包含网络服务封装。caffe主要使用该数据库来存储传入训练的图片数据与label。</p>
+<span id="more"></span>
+
+<p><strong>LMDB库</strong><br>它是个和levelDB类似的key/value存储库，是由OpenLDAP项目的Symas开发的。使用内存映射文件，因此读取的性能跟内存数据库一样，其大小受限于虚拟地址空间的大小。caffe主要使用该数据库来存储传入训练的图片数据与label。</p>
+<p><strong>ProtoBuf库</strong><br>GoogleProtocol Buffer（简称ProtoBuf），它是一种轻便高效的结构化数据存储格式，可以用于结构化数据串行化，或者说序列化。它很适合做数据存储或RPC数据交换格式。可用于通信协议、数据存储等领域的语言无关、平台无关、可扩展的序列化结构数据格式。要使用ProtoBuf库，首先需要自己编写一个.proto文件，定义我们程序中需要处理的结构化数据，例如在caffe中文件”/src/caffe/proto/caffe.proto”中就定义了传入程序的一些网络参数，这些参数定义在“solver.prototxt”文件中。</p>
+<p><strong>HDF（Hierarchical Data Format）</strong><br>HDF是一种为存储和处理大容量科学数据而设计的文件格式及相应的库文件。它可以存储不同类型的图像和数码数据的文件格式，并且可以在不同类型的机器上传输，同时还有统一处理这种文件格式的函数库。当前最流行的版本是HDF5，HDF5是分层式数据管理结构。HDF5只有两种基本结构，组（group）和数据集（dataset）。组，包含0个或多个HDF5对象以及支持元数据（metadata）的一个群组结构。数据集，数据元素的一个多维数组以及支持元数据。</p>
+<p><strong>GFlags库</strong><br>它是google的一个开源的处理命令行参数的库，使用C++开发，可以替代getopt函数。GFlags与getopt函数不同，在GFlags中，标记的定义分散在源代码中，不需要列举在一个地方。</p>
+<p><strong>GLog库</strong><br>它是一个应用程序的日志库，提供基于C++风格的流的日志API，以及各种辅助的宏。它的使用方式与C++的stream操作类似。</p>
+<p><strong>CUDA</strong><br>NVIDIA公司推出的基于NVIDIA显卡的GPU计算接口，使GPU能够解决复杂的计算问题。</p>
+<p><strong>Blas库</strong><br>基础线性代数子程序库，里面拥有大量已经编写好的关于线性代数运算的程序。caffe中在/src/caffe/util/Math_functions.cpp文件中多次调用库中函数实现矩阵运算。</p>
+<p><strong>BOOST库</strong><br>它是一个可移植、跨平台，提供源代码的C++库，作为标准库的后备。</p>
+<h2 id="目录结构"><a href="#目录结构" class="headerlink" title="目录结构"></a>目录结构</h2><p><img src="/images/Caffe%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB1-%E5%9F%BA%E6%9C%AC%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84%E6%80%BB%E8%A7%88/20160107090227464-1626774734016"></p>
+<p><img src="/images/Caffe%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB1-%E5%9F%BA%E6%9C%AC%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84%E6%80%BB%E8%A7%88/20160107090630061-1626774738059"></p>
+<p><img src="/images/Caffe%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB1-%E5%9F%BA%E6%9C%AC%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84%E6%80%BB%E8%A7%88/20180605192542858-1626774743669"></p>
+<h2 id="类图"><a href="#类图" class="headerlink" title="类图"></a>类图</h2><p><strong>Blob：</strong>是数据传输的媒介，神经网络涉及到的输入输出数据，网络权重参数等等，其实都是转化为Blob数据结构来存储的。<br><strong>Layer：</strong>是神经网络的基础单元，层与层间的数据节点、前后传递都在该数据结构中被实现，因神经网络网络中设计到多种层，这里layers下实现了卷积层、激励层，池化层，全连接层等等“积木元件”，丰富度很高。<br><strong>Net：</strong>是网络的整体搭建骨架，整合Layer中的层级机构组成网络。<br><strong>Solver：</strong>是网络的求解优化策略，让你用各种“积木”搭建的网络能最适应当前的场景下的样本，如果做深度学习优化研究的话，可能会修改这个模块。</p>
+<p><img src="/images/Caffe%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB1-%E5%9F%BA%E6%9C%AC%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84%E6%80%BB%E8%A7%88/20180606214549698-1626774754996"></p>
+<h2 id="运行流程"><a href="#运行流程" class="headerlink" title="运行流程"></a>运行流程</h2><p><strong>step1:</strong> 命令行下输入<code>./build/tools/caffe train -solver xxx.prototxt</code> 运行了<strong>程序的入口caffe.cpp main()</strong></p>
+<p><strong>step2:</strong> caffe.cpp main()根据命令行输入的参数train 调用<strong>caffe.cpp train()</strong></p>
+<p><strong>step3:</strong> caffe.cpp train()读取<code>xxx.prototxt</code>的参数<strong>调用solver.cpp Solver()</strong> 的构造函数创建Solver对象</p>
+<p><strong>step4:</strong> 创建Solver对象的时候需要调用<strong>solver.cpp Init()</strong> 函数来初始化模型的网络</p>
+<p><strong>step5:</strong> <code>solver.cpp Init()</code>函数调用<strong>solver.cpp InitTrainNet()和InitTestNets()</strong> 函数来分别初始化训练和测试网络。</p>
+<p><strong>step6:</strong><code>InitTrainNet()</code>通过<code>xxx.prototxt </code>指定的<code>xxxnet.prototxt</code>读取net的参数，调用<strong>net.cpp Net()</strong> 的构造函数，创建训练网络，</p>
+<p><strong>step7:</strong> net.cpp Net()调用<strong>net.cpp Init()</strong> 函数，通过for循环来1)创建网络中每一个Layer对象，2)设置bottom和top，3）调用layer.cpp Setup()</p>
+<p><strong>step8:</strong> 调用<code>InitTestNets()</code>创建测试网络，与<code>InitTrainNet(）</code>类似</p>
+<p><strong>step9:</strong> 运行返回到caffe.cpp train()中，利用创建好的solver对象调用<strong>solver.cpp Solve()</strong> 函数</p>
+<p><strong>step10:</strong> solver.cpp Solve() 调用 <strong>solver.cpp Step()</strong> 函数，while循环迭代的次数，每次迭代 1）调用net.cpp <code>ForwardBackward()</code>来前向以及后向传播 2)<code>solve.cpp ApplyUpdate()</code>更新参数 3）每一定轮次运行<code>solver.cpp TestAll()</code></p>
+<p><strong>step11:</strong> 运行结束</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/06/20/Caffe%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB1-%E5%9F%BA%E6%9C%AC%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84%E6%80%BB%E8%A7%88/" data-id="ckrbw9v6p0001aoum6nhj5gsr" data-title="Caffe源码阅读1-基本代码结构总览" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag">深度学习</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/07/19/Caffe%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB2-conv%20layer%20forward/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Caffe源码阅读2-conv layer forward
+        
+      </div>
+    </a>
+  
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag">深度学习</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" style="font-size: 10px;">深度学习</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2021/07/19/Caffe%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB2-conv%20layer%20forward/">Caffe源码阅读2-conv layer forward</a>
+          </li>
+        
+          <li>
+            <a href="/2021/06/20/Caffe%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB1-%E5%9F%BA%E6%9C%AC%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84%E6%80%BB%E8%A7%88/">Caffe源码阅读1-基本代码结构总览</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2021 Chas<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
