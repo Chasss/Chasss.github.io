@@ -6,23 +6,23 @@
   
   <title>Caffe源码阅读1-基本代码结构总览 | Living in the Current</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="依赖库LevelDB库它是google实现的一个非常高效的Key-Value数据库。它是单进程的服务，性能非常高。它只是一个C&#x2F;C++编程语言的库，不包含网络服务封装。caffe主要使用该数据库来存储传入训练的图片数据与label。">
+  <meta name="description" content="学习caffe是因为caffe的源码比较容易阅读，其他pytorch、tensorflow框架层层封装我自己读起来太困难了。因为研究方向的问题，希望通过阅读通用框架的源码对深度学习的实现和部署有更深入的了解。 依赖库LevelDB库它是google实现的一个非常高效的Key-Value数据库。它是单进程的服务，性能非常高。它只是一个C&#x2F;C++编程语言的库，不包含网络服务封装。caffe主要使用该数">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Caffe源码阅读1-基本代码结构总览">
-<meta property="og:url" content="http://example.com/2021/06/20/Caffe%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB1-%E5%9F%BA%E6%9C%AC%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84%E6%80%BB%E8%A7%88/index.html">
+<meta property="og:url" content="http://example.com/2021/06/20/caffe-source-code1/index.html">
 <meta property="og:site_name" content="Living in the Current">
-<meta property="og:description" content="依赖库LevelDB库它是google实现的一个非常高效的Key-Value数据库。它是单进程的服务，性能非常高。它只是一个C&#x2F;C++编程语言的库，不包含网络服务封装。caffe主要使用该数据库来存储传入训练的图片数据与label。">
+<meta property="og:description" content="学习caffe是因为caffe的源码比较容易阅读，其他pytorch、tensorflow框架层层封装我自己读起来太困难了。因为研究方向的问题，希望通过阅读通用框架的源码对深度学习的实现和部署有更深入的了解。 依赖库LevelDB库它是google实现的一个非常高效的Key-Value数据库。它是单进程的服务，性能非常高。它只是一个C&#x2F;C++编程语言的库，不包含网络服务封装。caffe主要使用该数">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://example.com/images/Caffe%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB1-%E5%9F%BA%E6%9C%AC%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84%E6%80%BB%E8%A7%88/20160107090227464-1626774734016">
-<meta property="og:image" content="http://example.com/images/Caffe%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB1-%E5%9F%BA%E6%9C%AC%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84%E6%80%BB%E8%A7%88/20160107090630061-1626774738059">
-<meta property="og:image" content="http://example.com/images/Caffe%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB1-%E5%9F%BA%E6%9C%AC%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84%E6%80%BB%E8%A7%88/20180605192542858-1626774743669">
-<meta property="og:image" content="http://example.com/images/Caffe%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB1-%E5%9F%BA%E6%9C%AC%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84%E6%80%BB%E8%A7%88/20180606214549698-1626774754996">
+<meta property="og:image" content="http://example.com/images/caffe-source-code1/20160107090227464-1626774734016">
+<meta property="og:image" content="http://example.com/images/caffe-source-code1/20160107090630061-1626774738059">
+<meta property="og:image" content="http://example.com/images/caffe-source-code1/20180605192542858-1626774743669">
+<meta property="og:image" content="http://example.com/images/caffe-source-code1/20180606214549698-1626774754996">
 <meta property="article:published_time" content="2021-06-20T09:16:16.000Z">
-<meta property="article:modified_time" content="2021-07-20T10:04:48.325Z">
+<meta property="article:modified_time" content="2021-07-21T10:09:23.588Z">
 <meta property="article:author" content="Chas">
 <meta property="article:tag" content="深度学习">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/images/Caffe%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB1-%E5%9F%BA%E6%9C%AC%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84%E6%80%BB%E8%A7%88/20160107090227464-1626774734016">
+<meta name="twitter:image" content="http://example.com/images/caffe-source-code1/20160107090227464-1626774734016">
   
     <link rel="alternate" href="/atom.xml" title="Living in the Current" type="application/atom+xml">
   
@@ -79,9 +79,9 @@
 </header>
 
       <div class="outer">
-        <section id="main"><article id="post-Caffe源码阅读1-基本代码结构总览" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+        <section id="main"><article id="post-caffe-source-code1" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/2021/06/20/Caffe%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB1-%E5%9F%BA%E6%9C%AC%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84%E6%80%BB%E8%A7%88/" class="article-date">
+    <a href="/2021/06/20/caffe-source-code1/" class="article-date">
   <time class="dt-published" datetime="2021-06-20T09:16:16.000Z" itemprop="datePublished">2021-06-20</time>
 </a>
     
@@ -101,7 +101,8 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h2 id="依赖库"><a href="#依赖库" class="headerlink" title="依赖库"></a>依赖库</h2><p><strong>LevelDB库</strong><br>它是google实现的一个非常高效的Key-Value数据库。它是单进程的服务，性能非常高。它只是一个C/C++编程语言的库，不包含网络服务封装。caffe主要使用该数据库来存储传入训练的图片数据与label。</p>
+        <p>学习caffe是因为caffe的源码比较容易阅读，其他pytorch、tensorflow框架层层封装我自己读起来太困难了。因为研究方向的问题，希望通过阅读通用框架的源码对深度学习的实现和部署有更深入的了解。</p>
+<h2 id="依赖库"><a href="#依赖库" class="headerlink" title="依赖库"></a>依赖库</h2><p><strong>LevelDB库</strong><br>它是google实现的一个非常高效的Key-Value数据库。它是单进程的服务，性能非常高。它只是一个C/C++编程语言的库，不包含网络服务封装。caffe主要使用该数据库来存储传入训练的图片数据与label。</p>
 <span id="more"></span>
 
 <p><strong>LMDB库</strong><br>它是个和levelDB类似的key/value存储库，是由OpenLDAP项目的Symas开发的。使用内存映射文件，因此读取的性能跟内存数据库一样，其大小受限于虚拟地址空间的大小。caffe主要使用该数据库来存储传入训练的图片数据与label。</p>
@@ -112,11 +113,11 @@
 <p><strong>CUDA</strong><br>NVIDIA公司推出的基于NVIDIA显卡的GPU计算接口，使GPU能够解决复杂的计算问题。</p>
 <p><strong>Blas库</strong><br>基础线性代数子程序库，里面拥有大量已经编写好的关于线性代数运算的程序。caffe中在/src/caffe/util/Math_functions.cpp文件中多次调用库中函数实现矩阵运算。</p>
 <p><strong>BOOST库</strong><br>它是一个可移植、跨平台，提供源代码的C++库，作为标准库的后备。</p>
-<h2 id="目录结构"><a href="#目录结构" class="headerlink" title="目录结构"></a>目录结构</h2><p><img src="/images/Caffe%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB1-%E5%9F%BA%E6%9C%AC%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84%E6%80%BB%E8%A7%88/20160107090227464-1626774734016"></p>
-<p><img src="/images/Caffe%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB1-%E5%9F%BA%E6%9C%AC%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84%E6%80%BB%E8%A7%88/20160107090630061-1626774738059"></p>
-<p><img src="/images/Caffe%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB1-%E5%9F%BA%E6%9C%AC%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84%E6%80%BB%E8%A7%88/20180605192542858-1626774743669"></p>
+<h2 id="目录结构"><a href="#目录结构" class="headerlink" title="目录结构"></a>目录结构</h2><p><img src="/images/caffe-source-code1/20160107090227464-1626774734016"></p>
+<p><img src="/images/caffe-source-code1/20160107090630061-1626774738059"></p>
+<p><img src="/images/caffe-source-code1/20180605192542858-1626774743669"></p>
 <h2 id="类图"><a href="#类图" class="headerlink" title="类图"></a>类图</h2><p><strong>Blob：</strong>是数据传输的媒介，神经网络涉及到的输入输出数据，网络权重参数等等，其实都是转化为Blob数据结构来存储的。<br><strong>Layer：</strong>是神经网络的基础单元，层与层间的数据节点、前后传递都在该数据结构中被实现，因神经网络网络中设计到多种层，这里layers下实现了卷积层、激励层，池化层，全连接层等等“积木元件”，丰富度很高。<br><strong>Net：</strong>是网络的整体搭建骨架，整合Layer中的层级机构组成网络。<br><strong>Solver：</strong>是网络的求解优化策略，让你用各种“积木”搭建的网络能最适应当前的场景下的样本，如果做深度学习优化研究的话，可能会修改这个模块。</p>
-<p><img src="/images/Caffe%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB1-%E5%9F%BA%E6%9C%AC%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84%E6%80%BB%E8%A7%88/20180606214549698-1626774754996"></p>
+<p><img src="/images/caffe-source-code1/20180606214549698-1626774754996"></p>
 <h2 id="运行流程"><a href="#运行流程" class="headerlink" title="运行流程"></a>运行流程</h2><p><strong>step1:</strong> 命令行下输入<code>./build/tools/caffe train -solver xxx.prototxt</code> 运行了<strong>程序的入口caffe.cpp main()</strong></p>
 <p><strong>step2:</strong> caffe.cpp main()根据命令行输入的参数train 调用<strong>caffe.cpp train()</strong></p>
 <p><strong>step3:</strong> caffe.cpp train()读取<code>xxx.prototxt</code>的参数<strong>调用solver.cpp Solver()</strong> 的构造函数创建Solver对象</p>
@@ -132,7 +133,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/06/20/Caffe%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB1-%E5%9F%BA%E6%9C%AC%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84%E6%80%BB%E8%A7%88/" data-id="ckrbw9v6p0001aoum6nhj5gsr" data-title="Caffe源码阅读1-基本代码结构总览" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/06/20/caffe-source-code1/" data-id="ckrdbqmjo0002jcumdjjndcjy" data-title="Caffe源码阅读1-基本代码结构总览" class="article-share-link">Share</a>
       
       
       
@@ -144,7 +145,7 @@
     
 <nav id="article-nav">
   
-    <a href="/2021/07/19/Caffe%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB2-conv%20layer%20forward/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2021/07/05/caffe-source-code2/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Newer</strong>
       <div class="article-nav-title">
         
@@ -153,6 +154,11 @@
       </div>
     </a>
   
+  
+    <a href="/2021/06/15/caffe-env/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Caffe win10+VS2019环境配置及python接口配置</div>
+    </a>
   
 </nav>
 
@@ -203,11 +209,15 @@
       <ul>
         
           <li>
-            <a href="/2021/07/19/Caffe%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB2-conv%20layer%20forward/">Caffe源码阅读2-conv layer forward</a>
+            <a href="/2021/07/05/caffe-source-code2/">Caffe源码阅读2-conv layer forward</a>
           </li>
         
           <li>
-            <a href="/2021/06/20/Caffe%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB1-%E5%9F%BA%E6%9C%AC%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84%E6%80%BB%E8%A7%88/">Caffe源码阅读1-基本代码结构总览</a>
+            <a href="/2021/06/20/caffe-source-code1/">Caffe源码阅读1-基本代码结构总览</a>
+          </li>
+        
+          <li>
+            <a href="/2021/06/15/caffe-env/">Caffe win10+VS2019环境配置及python接口配置</a>
           </li>
         
       </ul>
