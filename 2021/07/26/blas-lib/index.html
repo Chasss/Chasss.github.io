@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>深度学习计算库1-概览 | Living in the Current</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="BLAS(Basic Linear Algebra Subprograms) Basic Linear Algebra Subprograms (BLAS) is a specification that prescribes a set of low-level routines for performing common linear algebra operations such as ve">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深度学习计算库1-概览">
+<meta property="og:url" content="http://example.com/2021/07/26/blas-lib/index.html">
+<meta property="og:site_name" content="Living in the Current">
+<meta property="og:description" content="BLAS(Basic Linear Algebra Subprograms) Basic Linear Algebra Subprograms (BLAS) is a specification that prescribes a set of low-level routines for performing common linear algebra operations such as ve">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-07-26T14:09:44.000Z">
+<meta property="article:modified_time" content="2021-07-28T08:57:49.614Z">
+<meta property="article:author" content="Chas">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="BLAS">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Living in the Current" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Living in the Current</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-blas-lib" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/26/blas-lib/" class="article-date">
+  <time class="dt-published" datetime="2021-07-26T14:09:44.000Z" itemprop="datePublished">2021-07-26</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      深度学习计算库1-概览
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="BLAS-Basic-Linear-Algebra-Subprograms"><a href="#BLAS-Basic-Linear-Algebra-Subprograms" class="headerlink" title="BLAS(Basic Linear Algebra Subprograms)"></a>BLAS(Basic Linear Algebra Subprograms)</h2><blockquote>
+<p>Basic Linear Algebra Subprograms (BLAS) is a specification that prescribes a set of low-level routines for performing common linear algebra operations such as vector addition, scalar multiplication, dot products, linear combinations, and matrix multiplication. ——wiki</p>
+</blockquote>
+<blockquote>
+<p>The BLAS (Basic Linear Algebra Subprograms) are routines that provide standard building blocks for performing basic vector and matrix operations. The Level 1 BLAS perform scalar, vector and vector-vector operations, the Level 2 BLAS perform matrix-vector operations, and the Level 3 BLAS perform matrix-matrix operations. Because the BLAS are efficient, portable, and widely available, they are commonly used in the development of high quality linear algebra software, <a target="_blank" rel="noopener" href="http://www.netlib.org/lapack/">LAPACK</a> for example.——netlib</p>
+</blockquote>
+<span id="more"></span>
+
+<p>BLAS是一种规范，给向量和矩阵的计算实现提供了一套标准。</p>
+<p>它起源于 1979 年的 Fortran 库，其接口由 BLAS 技术 (BLAST) 论坛标准化，其最新的 BLAS 报告可在netlib)网站上找到。</p>
+<p>总结就是BLAS为线性代数计算库的实现提供了一套规范的标准。</p>
+<p>也就是说，不同的作者可以各自写出不同版本的 BLAS 库， 实现同样的接口和功能， 但每个函数内部的算法可以不同， 这些不同也导致了不同版本的 BLAS 在不同机器上运行的速度也不同，但他们都使用了BLAS的规范让用户开发时能够方便地调用。</p>
+<p>具体标准可在netlib网站上看到（下面有列举），这里简单说明，不详细赘述。</p>
+<ul>
+<li><p>Level 1 BLAS 实现标量、向量和向量-向量运算</p>
+</li>
+<li><p>Level 2 BLAS 实现矩阵-向量运算</p>
+</li>
+<li><p>Level 3 BLAS 实现矩阵-矩阵运算。</p>
+</li>
+</ul>
+<h2 id="线性代数计算库概览"><a href="#线性代数计算库概览" class="headerlink" title="线性代数计算库概览"></a>线性代数计算库概览</h2><h3 id="基础库"><a href="#基础库" class="headerlink" title="基础库"></a>基础库</h3><h4 id="BLAS"><a href="#BLAS" class="headerlink" title="BLAS"></a>BLAS</h4><p>虽然BLAS是一种标准，但最早是由Netlib用Fortran实现了BLAS的这些API接口，所以得到的库也叫做BLAS。Netlib只是一般性地实现了基本功能，并没有对运算做过多的优化。在高性能计算领域，BLAS被广泛使用。为提高性能，各软硬件厂商则针对其产品对BLAS接口实现进行高度最佳化。</p>
+<p>参考链接：</p>
+<ul>
+<li><p><a target="_blank" rel="noopener" href="http://www.netlib.org/blas/">http://www.netlib.org/blas/</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms">https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms</a></p>
+</li>
+</ul>
+<h4 id="LAPACK"><a href="#LAPACK" class="headerlink" title="LAPACK"></a>LAPACK</h4><p>线性代数库，也是Netlib用Fortran语言编写的，其底层是BLAS。LAPACK提供了丰富的工具函式，可用于诸如<strong>解多元线性方程式、线性系统方程组的最小平方解、计算特徵向量、用于计算矩阵QR分解的Householder转换、以及奇异值分解等问题</strong> 。该库的运行效率比BLAS库高。从某个角度讲，LAPACK也可以称作是一组科学计算（矩阵运算）的接口规范。Netlib实现了这一组规范的功能，得到的这个库叫做LAPACK库。</p>
+<p>参考链接</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://www.netlib.org/lapack/">http://www.netlib.org/lapack/</a></li>
+<li><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/LAPACK">https://zh.wikipedia.org/wiki/LAPACK</a></li>
+</ul>
+<h4 id="ScaLAPACK"><a href="#ScaLAPACK" class="headerlink" title="ScaLAPACK"></a>ScaLAPACK</h4><p>ScaLAPACK（Scalable LAPACK 简称）是一个<strong>并行计算</strong> 软件包，适用于分布式存储的 MIMD （multiple instruction, multiple data）并行计算机。它是采用消息传递机制实现处理器/进程间通信，因此使用起来和编写传统的 MPI 程序比较类似。ScaLAPACK 主要针<strong>对密集和带状线性代数系统，提供若干线性代数求解功能，如各种矩阵运算，矩阵分解，线性方程组求解，最小二乘问题，本征值问题，奇异值问题</strong> 等，具有高效、可移植、可伸缩、高可靠性等优点，利用它的求解库可以开发出基于线性代数运算的并行应用程序。</p>
+<p>参考链接</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://www.netlib.org/scalapack/index.html">http://www.netlib.org/scalapack/index.html</a></li>
+</ul>
+<h3 id="高级库"><a href="#高级库" class="headerlink" title="高级库"></a>高级库</h3><p>在以上的库的基础上，针对不同平台不同硬件有很多高级库的实现，例如Caffe(cpu)中就可选openBLAS、Atlas、intel-MKL等等。</p>
+<p>这里举例一些深度学习中经常用到的。</p>
+<h4 id="OpenBLAS"><a href="#OpenBLAS" class="headerlink" title="OpenBLAS"></a>OpenBLAS</h4><p>OpenBLAS 是一个优化的 BLAS 库，基于 GotoBLAS2 1.13 BSD 版本。</p>
+<p>OpenBLAS 简单说就是 BLAS+LAPACK 在多种CPU上的重新实现。提供C，Fortran接口。 </p>
+<p>开源地址：</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/xianyi/OpenBLAS">https://github.com/xianyi/OpenBLAS</a></p>
+<h4 id="Intel-MKL-oneMKL"><a href="#Intel-MKL-oneMKL" class="headerlink" title="Intel-MKL(oneMKL)"></a>Intel-MKL(oneMKL)</h4><p>英特尔® oneAPI 数学内核库 (oneMKL) 是一个计算数学库，其中包含高度优化和广泛并行化的例程，适用于需要最高性能的应用程序。oneMKL 包含适用于 CPU 架构的完整英特尔® Math Kernel Library（具有 C/Fortran 编程语言接口）的高性能优化，并向其中添加了一组数据并行 C++ (DPC++) 编程语言接口，以在各种 CPU 架构上实现性能和英特尔图形技术用于某些关键功能。</p>
+<p>提供接口，不开源。</p>
+<p>官方文档：</p>
+<p><a target="_blank" rel="noopener" href="https://software.intel.com/content/www/us/en/develop/documentation/oneapi-programming-guide/top/api-based-programming/intel-oneapi-math-kernel-library-onemkl.html">https://software.intel.com/content/www/us/en/develop/documentation/oneapi-programming-guide/top/api-based-programming/intel-oneapi-math-kernel-library-onemkl.html</a></p>
+<h4 id="cuBLAS"><a href="#cuBLAS" class="headerlink" title="cuBLAS"></a>cuBLAS</h4><p>cuBLAS 库是基于 NVIDIA®CUDA™ 运行时的 BLAS的实现。它允许用户访问 NVIDIA 图形处理单元 (GPU) 的计算资源。</p>
+<p>cublas并不是使用cuda编写，主要使用类似汇编的sass code开发。</p>
+<p>提供接口，不开源。</p>
+<p>官方文档：</p>
+<p><a target="_blank" rel="noopener" href="https://docs.nvidia.com/cuda/cublas/">https://docs.nvidia.com/cuda/cublas/</a></p>
+<h2 id="深度学习加速库"><a href="#深度学习加速库" class="headerlink" title="深度学习加速库"></a>深度学习加速库</h2><p>虽然深度学习的很多计算类似矩阵计算，但与线性代数计算还是有所不同具有自己的特点，所以也有很多针对深度学习高性能计算库的库。</p>
+<p>以目前主流框架为例，pytorch的底层cpu使用mkl-dnn，gpu使用cudnn</p>
+<h3 id="MKL-DNN-oneDNN"><a href="#MKL-DNN-oneDNN" class="headerlink" title="MKL-DNN(oneDNN)"></a>MKL-DNN(oneDNN)</h3><p>oneAPI 深度神经网络库 (oneDNN) 是一个开源的跨平台性能库，包含用于深度学习应用程序的基本构建块。该库针对英特尔架构处理器、英特尔处理器显卡和基于 Xe 架构的显卡进行了优化。oneDNN 对以下架构提供实验支持：</p>
+<ul>
+<li>Arm* 64-bit Architecture (AArch64)</li>
+<li>NVIDIA* GPU</li>
+<li>OpenPOWER* Power ISA (PPC64)</li>
+<li>IBMz* (s390x)</li>
+</ul>
+<p>开源（但是底层使用的的oneMKL是不开源的）</p>
+<p>开源地址：</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/oneapi-src/oneDNN">https://github.com/oneapi-src/oneDNN</a></p>
+<h3 id="cuDNN"><a href="#cuDNN" class="headerlink" title="cuDNN"></a>cuDNN</h3><p>在NVIDIA ® CUDA ®深层神经网络库™（cuDNN）是原语深层神经网络的GPU加速的库。cuDNN为标准例程（例如前向和后向卷积、池化、归一化和激活层）提供高度调整的实现。cuDNN是 NVIDIA ®深度学习 SDK 的一部分。</p>
+<p>全球的深度学习研究人员和框架开发人员依靠cuDNN 来实现高性能 GPU 加速。它使他们能够专注于训练神经网络和开发软件应用程序，而不是将时间花在低级 GPU 性能调整上。cuDNN 可加速广泛使用的深度学习框架，并且可供 NVIDIA Developer Program™ 的成员免费使用。</p>
+<p>不开源</p>
+<p>官方文档：</p>
+<p><a target="_blank" rel="noopener" href="https://docs.nvidia.com/deeplearning/cudnn/">https://docs.nvidia.com/deeplearning/cudnn/</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/26/blas-lib/" data-id="ckrn9ao130001agumhq19bcev" data-title="深度学习计算库1-概览" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/BLAS/" rel="tag">BLAS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag">深度学习</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2021/07/05/caffe-source-code2/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Caffe源码阅读2-conv layer forward</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/BLAS/" rel="tag">BLAS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag">深度学习</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/BLAS/" style="font-size: 10px;">BLAS</a> <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" style="font-size: 20px;">深度学习</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2021/07/26/blas-lib/">深度学习计算库1-概览</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/05/caffe-source-code2/">Caffe源码阅读2-conv layer forward</a>
+          </li>
+        
+          <li>
+            <a href="/2021/06/20/caffe-source-code1/">Caffe源码阅读1-基本代码结构总览</a>
+          </li>
+        
+          <li>
+            <a href="/2021/06/15/caffe-env/">Caffe win10+VS2019环境配置及python接口配置</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2021 Chas<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
