@@ -14,7 +14,7 @@
 <meta property="og:description" content="BLAS(Basic Linear Algebra Subprograms) Basic Linear Algebra Subprograms (BLAS) is a specification that prescribes a set of low-level routines for performing common linear algebra operations such as ve">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-07-26T14:09:44.000Z">
-<meta property="article:modified_time" content="2021-07-28T08:57:49.614Z">
+<meta property="article:modified_time" content="2021-08-02T03:03:41.861Z">
 <meta property="article:author" content="Chas">
 <meta property="article:tag" content="深度学习">
 <meta property="article:tag" content="BLAS">
@@ -169,11 +169,110 @@
 <p>不开源</p>
 <p>官方文档：</p>
 <p><a target="_blank" rel="noopener" href="https://docs.nvidia.com/deeplearning/cudnn/">https://docs.nvidia.com/deeplearning/cudnn/</a></p>
+<h2 id="深度学习推理加速库"><a href="#深度学习推理加速库" class="headerlink" title="深度学习推理加速库"></a>深度学习推理加速库</h2><h3 id="服务器端"><a href="#服务器端" class="headerlink" title="服务器端"></a>服务器端</h3><h4 id="TensorRT"><a href="#TensorRT" class="headerlink" title="TensorRT"></a>TensorRT</h4><p>NVIDIA的核心® TensorRT™是有助于在NVIDIA图形处理单元（GPU）的高性能推理一个C ++库。它旨在与 TensorFlow、PyTorch、MXNet 等训练框架以互补方式工作。它特别专注于在 GPU 上快速有效地运行已经训练好的网络。</p>
+<p>一些训练框架（例如 TensorFlow）已经集成了 TensorRT，因此可以使用它来加速框架内的推理。或者，TensorRT 可以用作用户应用程序中的库。它包括一个 ONNX 解析器以及用于以编程方式构建模型的 C++ 和 Python API。</p>
+<p>官方文档：<a target="_blank" rel="noopener" href="https://docs.nvidia.com/deeplearning/tensorrt/developer-guide/index.html">https://docs.nvidia.com/deeplearning/tensorrt/developer-guide/index.html</a></p>
+<p>开源地址：<a target="_blank" rel="noopener" href="https://github.com/NVIDIA/TensorRT">https://github.com/NVIDIA/TensorRT</a></p>
+<h3 id="移动端"><a href="#移动端" class="headerlink" title="移动端"></a>移动端</h3><table>
+<thead>
+<tr>
+<th><strong>框架</strong></th>
+<th><strong>公司</strong></th>
+<th><strong>支持硬件</strong></th>
+<th><strong>特性</strong></th>
+<th><strong>相关资源</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>TensorFlow Lite</strong></td>
+<td><strong>Google 2017</strong></td>
+<td><strong>CPU****GPU: android基于OpenGL, IOS基于Metal</strong></td>
+<td><strong>app内核优化,pre-fused激活,更快更小模型定量化</strong></td>
+<td><code>https://tensorflow.google.cn/lite/performance/gpu_advanced?hl=zh-cnhttps://tensorflow.google.cn/lite/ https://github.com/amitshekhariitbhu/Android-TensorFlow-Lite-Example</code></td>
+</tr>
+<tr>
+<td><strong>Core ML</strong></td>
+<td><strong>Apple 2017</strong></td>
+<td><strong>IOS(Accelerate(CPU)/Metal(GPU))</strong></td>
+<td><strong>Core ML 在设备端可以利用用户数据进行重新训练或优化。</strong></td>
+<td><code>https://developer.apple.com/documentation/coreml https://github.com/likedan/Awesome-CoreML-Modelshttps://developer.apple.com/cn/documentation/coreml/#overview</code></td>
+</tr>
+<tr>
+<td><strong>Caffe2</strong></td>
+<td><strong>Facebook 2017</strong></td>
+<td><strong>IOS,Android CPU</strong></td>
+<td><strong>GPU暂无资料，针对具有NEON指令的ARM CPU进行优化， 其性能超过iphone6的GPU优化的。</strong></td>
+<td><code> https://github.com/facebookarchive/caffe2```` https://caffe2.ai/docs/zoo.html```***</code> <a target="_blank" rel="noopener" href="https://github.com/caffe2/models%60">https://github.com/caffe2/models`</a>***</td>
+</tr>
+<tr>
+<td><strong>NCNN</strong></td>
+<td><strong>Tencnet 2017</strong></td>
+<td><strong>Android: CPU/GPU 32/ 64bit都支持****IOS: CPU 32/64bit GPU 64 bit</strong></td>
+<td><strong>支持全平台，主要针对手机端进行极致的优化，无第三方依赖库，但算子支持相对较少。</strong></td>
+<td><code>  https://github.com/Tencent/ncnn``*</code><a target="_blank" rel="noopener" href="https://github.com/BUG1989/caffe-int8-convert-tools.git%60*%60">https://github.com/BUG1989/caffe-int8-convert-tools.git`*`</a></td>
+</tr>
+<tr>
+<td><strong>Paddle-Mobile</strong></td>
+<td><strong>Baidu 2017</strong></td>
+<td><strong>Android: CPU GPU基于OpenCL</strong></td>
+<td><strong>仅支持Android</strong></td>
+<td><code>https://github.com/PaddlePaddle/paddle-mobile https://github.com/PaddlePaddle/Paddle</code></td>
+</tr>
+<tr>
+<td><strong>QNNPACK/NNPACK</strong> <strong>(加速库)</strong></td>
+<td><strong>Facebook</strong></td>
+<td><strong>Android / IOS</strong></td>
+<td><strong>主要针对卷积计算进行加速处理，armeabi-v7a需要CPU支持NEON指令,暂无GPU信息</strong></td>
+<td><code>https://github.com/pytorch/QNNPACKhttps://zhuanlan.zhihu.com/p/81026071https://github.com/Maratyszcza/NNPACK</code></td>
+</tr>
+<tr>
+<td><strong>MACE</strong></td>
+<td><strong>XIAOMI 2018</strong></td>
+<td><strong>支持Android / IOS CPU，GPU</strong></td>
+<td><strong>底层算子基于OpenCL实现</strong></td>
+<td><code>https://github.com/XiaoMi/mace https://github.com/XiaoMi/mace-modelshttps://mace.readthedocs.io/en/latest/chinese.html</code></td>
+</tr>
+<tr>
+<td><strong>MNN</strong></td>
+<td><strong>阿里****2019</strong></td>
+<td><strong>Android / IOS (CPU / GPU)</strong></td>
+<td><strong>通用性较好，算子支持性好</strong></td>
+<td><code>https://github.com/alibaba/MNN</code></td>
+</tr>
+<tr>
+<td><strong>TNN</strong></td>
+<td><strong>Tencent</strong> <strong>2020</strong></td>
+<td><strong>Android / IOS (ARM CPU /GPU / NPU)</strong></td>
+<td><strong>主要针对于移动端，基于NCNN开发，性能移动端略优于MNN。</strong></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/Tencent/TNN">https://github.com/Tencent/TNN</a></td>
+</tr>
+<tr>
+<td><strong>tengine</strong></td>
+<td><strong>ARM中国</strong></td>
+<td><strong>CPU/GPU/AIPU/DSP/FPGA</strong></td>
+<td><strong>适配所有硬件</strong></td>
+<td><a target="_blank" rel="noopener" href="http://www.tengine.org.cn/https://github.com/OAID/Tengine">http://www.tengine.org.cn/https://github.com/OAID/Tengine</a></td>
+</tr>
+<tr>
+<td><strong>computelibrary</strong></td>
+<td><strong>ARM</strong></td>
+<td><strong>CPU/GPU</strong></td>
+<td><strong>基于OpenCL对Mail GPU加速，基于Neon的方式对A系列CPU进行加速</strong></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/ARM-software/ComputeLibraryhttps://www.arm.com/why-arm/technologies/compute-library">https://github.com/ARM-software/ComputeLibraryhttps://www.arm.com/why-arm/technologies/compute-library</a></td>
+</tr>
+<tr>
+<td><strong>D2GO</strong></td>
+<td><strong>FACEBOOK</strong></td>
+<td></td>
+<td><strong>深度学习工具包包含检测，关键点预测，实例分割</strong></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/facebookresearch/d2gohttps://ai.facebook.com/blog/d2go-brings-detectron2-to-mobile/">https://github.com/facebookresearch/d2gohttps://ai.facebook.com/blog/d2go-brings-detectron2-to-mobile/</a></td>
+</tr>
+</tbody></table>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/07/26/blas-lib/" data-id="ckrn9ao130001agumhq19bcev" data-title="深度学习计算库1-概览" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/07/26/blas-lib/" data-id="cktzhmmuc0001xoumfl42as3b" data-title="深度学习计算库1-概览" class="article-share-link">Share</a>
       
       
       
@@ -184,6 +283,15 @@
   
     
 <nav id="article-nav">
+  
+    <a href="/2021/07/29/blas-openblas/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          深度学习计算库2-OpenBLAS矩阵乘法阅读
+        
+      </div>
+    </a>
   
   
     <a href="/2021/07/05/caffe-source-code2/" id="article-nav-older" class="article-nav-link-wrap">
@@ -227,7 +335,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li></ul>
     </div>
   </div>
 
@@ -240,19 +348,23 @@
       <ul>
         
           <li>
+            <a href="/2021/08/03/my/oneMKL/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2021/08/02/my/cudnn/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2021/08/02/my/mkl-dnn/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/29/blas-openblas/">深度学习计算库2-OpenBLAS矩阵乘法阅读</a>
+          </li>
+        
+          <li>
             <a href="/2021/07/26/blas-lib/">深度学习计算库1-概览</a>
-          </li>
-        
-          <li>
-            <a href="/2021/07/05/caffe-source-code2/">Caffe源码阅读2-conv layer forward</a>
-          </li>
-        
-          <li>
-            <a href="/2021/06/20/caffe-source-code1/">Caffe源码阅读1-基本代码结构总览</a>
-          </li>
-        
-          <li>
-            <a href="/2021/06/15/caffe-env/">Caffe win10+VS2019环境配置及python接口配置</a>
           </li>
         
       </ul>

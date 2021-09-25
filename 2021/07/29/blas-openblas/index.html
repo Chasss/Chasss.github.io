@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>深度学习计算库2-OpenBLAS矩阵乘法阅读 | Living in the Current</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="源码目录1234567891011121314151617181920212223242526OpenBLAS&#x2F;  ├── benchmark      Benchmark codes for BLAS├── cmake          CMakefiles├── ctest          Test codes for CBLAS interfaces├── driver         I">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深度学习计算库2-OpenBLAS矩阵乘法阅读">
+<meta property="og:url" content="http://example.com/2021/07/29/blas-openblas/index.html">
+<meta property="og:site_name" content="Living in the Current">
+<meta property="og:description" content="源码目录1234567891011121314151617181920212223242526OpenBLAS&#x2F;  ├── benchmark      Benchmark codes for BLAS├── cmake          CMakefiles├── ctest          Test codes for CBLAS interfaces├── driver         I">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/images/blas-openblas/20210127110525284.png">
+<meta property="article:published_time" content="2021-07-29T07:52:19.000Z">
+<meta property="article:modified_time" content="2021-08-02T07:05:53.309Z">
+<meta property="article:author" content="Chas">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="BLAS">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/blas-openblas/20210127110525284.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Living in the Current" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Living in the Current</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-blas-openblas" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/29/blas-openblas/" class="article-date">
+  <time class="dt-published" datetime="2021-07-29T07:52:19.000Z" itemprop="datePublished">2021-07-29</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      深度学习计算库2-OpenBLAS矩阵乘法阅读
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="源码目录"><a href="#源码目录" class="headerlink" title="源码目录"></a>源码目录</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">OpenBLAS/  </span><br><span class="line">├── benchmark      Benchmark codes for BLAS</span><br><span class="line">├── cmake          CMakefiles</span><br><span class="line">├── ctest          Test codes for CBLAS interfaces</span><br><span class="line">├── driver         Implemented in C</span><br><span class="line">│   ├── level2</span><br><span class="line">│   ├── level3</span><br><span class="line">│   └── others     Memory management, threading, etc</span><br><span class="line">├── exports        Generate shared library</span><br><span class="line">├── interface      Implement BLAS and CBLAS interfaces (callinkernel)</span><br><span class="line">│   ├── lapack</span><br><span class="line">│   └── netlib</span><br><span class="line">├── kernel         Optimized assembly kernels for CPU architectures</span><br><span class="line">│   ├── arm64</span><br><span class="line">│   ├── generic    General kernel codes written in plain C.</span><br><span class="line">│   ├── mips</span><br><span class="line">│   ├── x86_64</span><br><span class="line">│   └── ...  </span><br><span class="line">├── lapack          Optimized LAPACK codes (replacing those iPACK)</span><br><span class="line">│   ├── getf2</span><br><span class="line">│   └── ...</span><br><span class="line">├── lapack-netlib   LAPACK codes from netlib reference implementation</span><br><span class="line">├── reference       BLAS Fortran reference implementation (unused)</span><br><span class="line">├── relapack        Elmar Peise&#x27;s recursive LAPACK (implementeregular LAPACK)</span><br><span class="line">├── test            Test codes for BLAS</span><br><span class="line">└── utest           Regression test</span><br></pre></td></tr></table></figure>
+
+<p>BLAS 相关的源码在 <code>driver, interface, kernel</code> 三个目录下</p>
+<h2 id="软件层次"><a href="#软件层次" class="headerlink" title="软件层次"></a>软件层次</h2><p>如上面的源码路径，分为三个层次，分别是 Interface, driver, kernel 层。如下图。</p>
+<p>Interface 层的主要作用是根据接口的参数，指定要执行的分支，如我们上图中的例子，走的是 dgemm_nn，即数据是 double 类型，矩阵都不转置。</p>
+<p>Driver 层的作用是具体实现，比如 gemm 的 driver 层就是矩阵乘法，由于要实现一个高效率的矩阵乘法，不会只是简单的三层 for 循环就解决了。这一层会做一些任务切分，数据重排，以达到多核并行以及高效利用 cache 来提升 CPU 利用率的目的。</p>
+<p>kernel 层是核心运算，这里操作的数据已经都在 cache 上，通过向量化操作，也就是单指令多数据，来高效利用 CPU 的计算能力。<br>这里的实现要高效，需要使用一些汇编或者是 intrinsic 指令，所以针对不同的 CPU 平台，需要单独实现。<br>不过通用版本的实现一定会有，以支持暂时还没有优化的平台。<br><img src="/../images/blas-openblas/20210127110525284.png" alt="001_arch"></p>
+<p>以 gemm 为例，调用关系如下。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">interface/gemm.c</span><br><span class="line">        │</span><br><span class="line">driver/level3/level3.c</span><br><span class="line">        │</span><br><span class="line">gemm assembly kernels at kernel/</span><br></pre></td></tr></table></figure>
+
+
+<p>具体采用的哪个 kernel 查看预先写好的配置文件 ./kernel/$(ARCH)/KERNEL.$(CPU)。<br>我这个 case 就是 KERNEL.HASWELL，其中的配置如下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DGEMMKERNEL    =  dgemm_kernel_4x8_haswell.S</span><br></pre></td></tr></table></figure>
+
+<h2 id="interface"><a href="#interface" class="headerlink" title="interface"></a>interface</h2><h2 id="driver"><a href="#driver" class="headerlink" title="driver"></a>driver</h2><h2 id="kernel"><a href="#kernel" class="headerlink" title="kernel"></a>kernel</h2>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/29/blas-openblas/" data-id="cktzhmmug0002xoum7jqsf3gp" data-title="深度学习计算库2-OpenBLAS矩阵乘法阅读" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/BLAS/" rel="tag">BLAS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag">深度学习</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/08/02/my/mkl-dnn/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/07/26/blas-lib/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">深度学习计算库1-概览</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/BLAS/" rel="tag">BLAS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag">深度学习</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/BLAS/" style="font-size: 10px;">BLAS</a> <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" style="font-size: 20px;">深度学习</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2021/08/03/my/oneMKL/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2021/08/02/my/cudnn/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2021/08/02/my/mkl-dnn/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/29/blas-openblas/">深度学习计算库2-OpenBLAS矩阵乘法阅读</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/26/blas-lib/">深度学习计算库1-概览</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2021 Chas<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

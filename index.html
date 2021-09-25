@@ -71,6 +71,159 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-my/oneMKL" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/08/03/my/oneMKL/" class="article-date">
+  <time class="dt-published" datetime="2021-08-03T02:16:39.835Z" itemprop="datePublished">2021-08-03</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><a target="_blank" rel="noopener" href="https://software.intel.com/content/www/us/en/develop/documentation/oneapi-mkl-dpcpp-developer-reference/top/blas-and-sparse-blas-routines/blas-like-extensions/gemm-batch.html#gemm-batch">https://software.intel.com/content/www/us/en/develop/documentation/oneapi-mkl-dpcpp-developer-reference/top/blas-and-sparse-blas-routines/blas-like-extensions/gemm-batch.html#gemm-batch</a></p>
+<h1 id="gemm-batch"><a href="#gemm-batch" class="headerlink" title="gemm_ batch"></a>gemm_ batch</h1><p>Computes groups of matrix-matrix product with general matrices.</p>
+<h1 id="gemv"><a href="#gemv" class="headerlink" title="gemv"></a>gemv</h1><p>例如3x3 的 feature map，2x2的卷积核，输入输出通道都是2，举例如下<br>$$<br>feature\ map\left[ \begin{matrix} 0 &amp; 1 &amp; 2 \ 3 &amp; 4 &amp; 5 \ 6 &amp; 7 &amp; 8 \end{matrix} \right]<br>kernel \left[ \begin{matrix} 0 &amp; 1  \ 2 &amp; 3 \end{matrix} \right]<br>$$</p>
+<p>$$<br>\left[ \begin{matrix} 0 &amp; 1 &amp; 3 &amp; 4  \ 1 &amp; 2 &amp; 4 &amp; 5\ 3 &amp; 4 &amp; 6 &amp; 7\ 4 &amp; 5 &amp; 7 &amp; 8\end{matrix} \right]<br>\left[ \begin{matrix} 0 &amp; 4  \ 1 &amp; 5 \ 2 &amp; 6 \ 3 &amp; 7 \end{matrix} \right]<br>$$</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/08/03/my/oneMKL/" data-id="cktzhmmve000jxoumcabset2n" data-title="" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-my/cudnn" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/08/02/my/cudnn/" class="article-date">
+  <time class="dt-published" datetime="2021-08-02T07:08:50.980Z" itemprop="datePublished">2021-08-02</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/08/02/my/cudnn/" data-id="cktzhmmty0000xoum92w2a1bg" data-title="" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-my/mkl-dnn" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/08/02/my/mkl-dnn/" class="article-date">
+  <time class="dt-published" datetime="2021-08-02T07:05:35.823Z" itemprop="datePublished">2021-08-02</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <ol>
+<li>卷积计算</li>
+</ol>
+<p>在深度神经网络进行推理时，卷积层的计算时间一般占总推理时间的绝大部分，因此如何优化卷积的计算以达到更快的推理速度，是每一个推理引擎都需要重点关注和设计的内容。在MKLDNN中，使用了以下三种算法对卷积进行计算：</p>
+<p>1）直接法：使用SIMD指令集来直接进行卷积计算；</p>
+<p>2）Winograd算法：使用Winograd算法进行卷积计算，该方法虽然减小了计算复杂度，但同时也降低了精度并且增加了内存消耗；</p>
+<p>3）GEMM算法：使用GEMM算法进行卷积计算。</p>
+<p>在进行卷积计算方法选择时，其判断流程可如下图所示：</p>
+<p><img src="/../images/mkl-dnn/0f3bc076bb17d1b0bf12e8da0ef288fd.png" alt="img"></p>
+<p>图 2 卷积计算算法选择流程</p>
+<p>在计算卷积时，首先判断其能否使用Winograd算法，该算法的使用条件为：1）CPU需支持Intel AVX-512和Intel DL Boost；2）必须为2D卷积；3）权重必须为3x3，且没有dilation和strides（dilation=0，stride=1）；4）数据格式为int8或者fp32。如果以上条件全部满足，则使用Winograd算法进行卷积计算，否则判断能否使用Direct算法，Direct算法的使用条件为：1）对于组卷积，每组通道数是SIMD宽度的倍数；2）在每一个空间维度上，padding的尺寸不能超过权重维度的一半；3）权重的宽度不能够超过14。如果以上条件满足，则使用Direct算法，否则使用GEMM算法。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/08/02/my/mkl-dnn/" data-id="cktzhmmva000hxoum758y4ah7" data-title="" class="article-share-link">Share</a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-blas-openblas" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/07/29/blas-openblas/" class="article-date">
+  <time class="dt-published" datetime="2021-07-29T07:52:19.000Z" itemprop="datePublished">2021-07-29</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2021/07/29/blas-openblas/">深度学习计算库2-OpenBLAS矩阵乘法阅读</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="源码目录"><a href="#源码目录" class="headerlink" title="源码目录"></a>源码目录</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">OpenBLAS/  </span><br><span class="line">├── benchmark      Benchmark codes for BLAS</span><br><span class="line">├── cmake          CMakefiles</span><br><span class="line">├── ctest          Test codes for CBLAS interfaces</span><br><span class="line">├── driver         Implemented in C</span><br><span class="line">│   ├── level2</span><br><span class="line">│   ├── level3</span><br><span class="line">│   └── others     Memory management, threading, etc</span><br><span class="line">├── exports        Generate shared library</span><br><span class="line">├── interface      Implement BLAS and CBLAS interfaces (callinkernel)</span><br><span class="line">│   ├── lapack</span><br><span class="line">│   └── netlib</span><br><span class="line">├── kernel         Optimized assembly kernels for CPU architectures</span><br><span class="line">│   ├── arm64</span><br><span class="line">│   ├── generic    General kernel codes written in plain C.</span><br><span class="line">│   ├── mips</span><br><span class="line">│   ├── x86_64</span><br><span class="line">│   └── ...  </span><br><span class="line">├── lapack          Optimized LAPACK codes (replacing those iPACK)</span><br><span class="line">│   ├── getf2</span><br><span class="line">│   └── ...</span><br><span class="line">├── lapack-netlib   LAPACK codes from netlib reference implementation</span><br><span class="line">├── reference       BLAS Fortran reference implementation (unused)</span><br><span class="line">├── relapack        Elmar Peise&#x27;s recursive LAPACK (implementeregular LAPACK)</span><br><span class="line">├── test            Test codes for BLAS</span><br><span class="line">└── utest           Regression test</span><br></pre></td></tr></table></figure>
+
+<p>BLAS 相关的源码在 <code>driver, interface, kernel</code> 三个目录下</p>
+<h2 id="软件层次"><a href="#软件层次" class="headerlink" title="软件层次"></a>软件层次</h2><p>如上面的源码路径，分为三个层次，分别是 Interface, driver, kernel 层。如下图。</p>
+<p>Interface 层的主要作用是根据接口的参数，指定要执行的分支，如我们上图中的例子，走的是 dgemm_nn，即数据是 double 类型，矩阵都不转置。</p>
+<p>Driver 层的作用是具体实现，比如 gemm 的 driver 层就是矩阵乘法，由于要实现一个高效率的矩阵乘法，不会只是简单的三层 for 循环就解决了。这一层会做一些任务切分，数据重排，以达到多核并行以及高效利用 cache 来提升 CPU 利用率的目的。</p>
+<p>kernel 层是核心运算，这里操作的数据已经都在 cache 上，通过向量化操作，也就是单指令多数据，来高效利用 CPU 的计算能力。<br>这里的实现要高效，需要使用一些汇编或者是 intrinsic 指令，所以针对不同的 CPU 平台，需要单独实现。<br>不过通用版本的实现一定会有，以支持暂时还没有优化的平台。<br><img src="/../images/blas-openblas/20210127110525284.png" alt="001_arch"></p>
+<p>以 gemm 为例，调用关系如下。</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">interface/gemm.c</span><br><span class="line">        │</span><br><span class="line">driver/level3/level3.c</span><br><span class="line">        │</span><br><span class="line">gemm assembly kernels at kernel/</span><br></pre></td></tr></table></figure>
+
+
+<p>具体采用的哪个 kernel 查看预先写好的配置文件 ./kernel/$(ARCH)/KERNEL.$(CPU)。<br>我这个 case 就是 KERNEL.HASWELL，其中的配置如下：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DGEMMKERNEL    =  dgemm_kernel_4x8_haswell.S</span><br></pre></td></tr></table></figure>
+
+<h2 id="interface"><a href="#interface" class="headerlink" title="interface"></a>interface</h2><h2 id="driver"><a href="#driver" class="headerlink" title="driver"></a>driver</h2><h2 id="kernel"><a href="#kernel" class="headerlink" title="kernel"></a>kernel</h2>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/07/29/blas-openblas/" data-id="cktzhmmug0002xoum7jqsf3gp" data-title="深度学习计算库2-OpenBLAS矩阵乘法阅读" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/BLAS/" rel="tag">BLAS</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag">深度学习</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-blas-lib" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/07/26/blas-lib/" class="article-date">
@@ -107,7 +260,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/07/26/blas-lib/" data-id="ckrn9ao130001agumhq19bcev" data-title="深度学习计算库1-概览" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/07/26/blas-lib/" data-id="cktzhmmuc0001xoumfl42as3b" data-title="深度学习计算库1-概览" class="article-share-link">Share</a>
       
       
       
@@ -153,7 +306,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/07/05/caffe-source-code2/" data-id="ckrn9ao1m0005agumbjrc6olh" data-title="Caffe源码阅读2-conv layer forward" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/07/05/caffe-source-code2/" data-id="cktzhmmv0000gxoum51ql64ns" data-title="Caffe源码阅读2-conv layer forward" class="article-share-link">Share</a>
       
       
       
@@ -199,7 +352,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/06/20/caffe-source-code1/" data-id="ckrn9ao1j0004agum2en36cbi" data-title="Caffe源码阅读1-基本代码结构总览" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/06/20/caffe-source-code1/" data-id="cktzhmmuo0005xoum31ag3792" data-title="Caffe源码阅读1-基本代码结构总览" class="article-share-link">Share</a>
       
       
       
@@ -249,7 +402,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/06/15/caffe-env/" data-id="ckrn9ao1a0002agumfidl5v7s" data-title="Caffe win10+VS2019环境配置及python接口配置" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/06/15/caffe-env/" data-id="cktzhmmul0004xoumbr585r2k" data-title="Caffe win10+VS2019环境配置及python接口配置" class="article-share-link">Share</a>
       
       
       
@@ -295,7 +448,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li></ul>
     </div>
   </div>
 
@@ -308,19 +461,23 @@
       <ul>
         
           <li>
+            <a href="/2021/08/03/my/oneMKL/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2021/08/02/my/cudnn/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2021/08/02/my/mkl-dnn/">(no title)</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/29/blas-openblas/">深度学习计算库2-OpenBLAS矩阵乘法阅读</a>
+          </li>
+        
+          <li>
             <a href="/2021/07/26/blas-lib/">深度学习计算库1-概览</a>
-          </li>
-        
-          <li>
-            <a href="/2021/07/05/caffe-source-code2/">Caffe源码阅读2-conv layer forward</a>
-          </li>
-        
-          <li>
-            <a href="/2021/06/20/caffe-source-code1/">Caffe源码阅读1-基本代码结构总览</a>
-          </li>
-        
-          <li>
-            <a href="/2021/06/15/caffe-env/">Caffe win10+VS2019环境配置及python接口配置</a>
           </li>
         
       </ul>
