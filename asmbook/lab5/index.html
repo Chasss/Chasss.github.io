@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>实验一-熟悉DEBUG调试环境 · ASM-LAB-BJTU-2021</title>
+        <title>实验五-中断控制器82C59A · ASM-LAB-BJTU-2021</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -65,10 +65,10 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="../lab2/" />
+    <link rel="next" href="../lab6/" />
     
     
-    <link rel="prev" href="../lab0/0.0.html" />
+    <link rel="prev" href="../lab4/" />
     
 
     </head>
@@ -126,9 +126,22 @@
             <ul class="articles">
                 
     
-        <li class="chapter " data-level="1.2.1" data-path="../lab0/0.0.html">
+        <li class="chapter " data-level="1.2.1" data-path="../lab0/0.1.html">
             
-                <a href="../lab0/0.0.html">
+                <a href="../lab0/0.1.html">
+            
+                    
+                    汇编语言实验-DOSBOX
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.2" data-path="../lab0/0.2.html">
+            
+                <a href="../lab0/0.2.html">
             
                     
                     接口技术实验-驱动与IDE
@@ -144,9 +157,9 @@
             
         </li>
     
-        <li class="chapter active" data-level="1.3" data-path="./">
+        <li class="chapter " data-level="1.3" data-path="../lab1/">
             
-                <a href="./">
+                <a href="../lab1/">
             
                     
                     实验一-熟悉DEBUG调试环境
@@ -196,9 +209,9 @@
             
         </li>
     
-        <li class="chapter " data-level="1.7" data-path="../lab5/">
+        <li class="chapter active" data-level="1.7" data-path="./">
             
-                <a href="../lab5/">
+                <a href="./">
             
                     
                     实验五-中断控制器82C59A
@@ -278,7 +291,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".." >实验一-熟悉DEBUG调试环境</a>
+        <a href=".." >实验五-中断控制器82C59A</a>
     </h1>
 </div>
 
@@ -293,7 +306,7 @@
     
                                 <section class="normal markdown-section">
                                 
-                                <h1 id="&#x5B9E;&#x9A8C;&#x4E00;-&#x719F;&#x6089;debug&#x8C03;&#x8BD5;&#x73AF;&#x5883;">&#x5B9E;&#x9A8C;&#x4E00;-&#x719F;&#x6089;DEBUG&#x8C03;&#x8BD5;&#x73AF;&#x5883;</h1>
+                                <h1 id="&#x5B9E;&#x9A8C;&#x4E94;-&#x4E2D;&#x65AD;&#x63A7;&#x5236;&#x5668;82c59a">&#x5B9E;&#x9A8C;&#x4E94;-&#x4E2D;&#x65AD;&#x63A7;&#x5236;&#x5668;82C59A</h1>
 
                                 
                                 </section>
@@ -321,12 +334,12 @@
 
             
                 
-                <a href="../lab0/0.0.html" class="navigation navigation-prev " aria-label="Previous page: 接口技术实验-驱动与IDE">
+                <a href="../lab4/" class="navigation navigation-prev " aria-label="Previous page: 实验四-定时/计数器82C54">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
                 
-                <a href="../lab2/" class="navigation navigation-next " aria-label="Next page: 实验二-统计键盘输入字符和数字个数">
+                <a href="../lab6/" class="navigation navigation-next " aria-label="Next page: 实验六-A/D或D/A实验">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -337,7 +350,7 @@
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"实验一-熟悉DEBUG调试环境","level":"1.3","depth":1,"next":{"title":"实验二-统计键盘输入字符和数字个数","level":"1.4","depth":1,"path":"lab2/README.md","ref":"lab2/README.md","articles":[]},"previous":{"title":"接口技术实验-驱动与IDE","level":"1.2.1","depth":2,"path":"lab0/0.0.md","ref":"lab0/0.0.md","articles":[]},"dir":"ltr"},"config":{"plugins":["page-toc-button","flexible-alerts","-sharing","livereload"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"flexible-alerts":{"danger":{"className":"danger","icon":"fa fa-ban","label":"Attention"},"note":{"className":"info","icon":"fa fa-info-circle","label":"Note"},"style":"flat","tip":{"className":"tip","icon":"fa fa-lightbulb-o","label":"Tip"},"warning":{"className":"warning","icon":"fa fa-exclamation-triangle","label":"Warning"}},"page-toc-button":{},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"tc","pdf":{"pageBreaksBefore":"/","headerTemplate":null,"paperSize":"a4","margin":{"right":62,"left":62,"top":36,"bottom":36},"fontSize":12,"fontFamily":"Arial","footerTemplate":null,"chapterMark":"pagebreak","pageNumbers":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"isbn":"","variables":{},"title":"ASM-LAB-BJTU-2021","links":{"sharing":{"all":null,"facebook":null,"google":null,"twitter":null,"weibo":null},"sidebar":{}},"gitbook":"*","description":null,"extension":null},"file":{"path":"lab1/README.md","mtime":"2021-09-14T13:30:46.434Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-09-24T00:56:59.422Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"实验五-中断控制器82C59A","level":"1.7","depth":1,"next":{"title":"实验六-A/D或D/A实验","level":"1.8","depth":1,"path":"lab6/README.md","ref":"lab6/README.md","articles":[]},"previous":{"title":"实验四-定时/计数器82C54","level":"1.6","depth":1,"path":"lab4/README.md","ref":"lab4/README.md","articles":[]},"dir":"ltr"},"config":{"plugins":["page-toc-button","flexible-alerts","-sharing","livereload"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"flexible-alerts":{"danger":{"className":"danger","icon":"fa fa-ban","label":"Attention"},"note":{"className":"info","icon":"fa fa-info-circle","label":"Note"},"style":"flat","tip":{"className":"tip","icon":"fa fa-lightbulb-o","label":"Tip"},"warning":{"className":"warning","icon":"fa fa-exclamation-triangle","label":"Warning"}},"page-toc-button":{},"livereload":{},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","author":"tc","pdf":{"pageBreaksBefore":"/","headerTemplate":null,"paperSize":"a4","margin":{"right":62,"left":62,"top":36,"bottom":36},"fontSize":12,"fontFamily":"Arial","footerTemplate":null,"chapterMark":"pagebreak","pageNumbers":false},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"isbn":"","variables":{},"title":"ASM-LAB-BJTU-2021","links":{"sharing":{"all":null,"facebook":null,"google":null,"twitter":null,"weibo":null},"sidebar":{}},"gitbook":"*","description":null,"extension":null},"file":{"path":"lab5/README.md","mtime":"2021-09-25T08:14:24.160Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2021-09-25T08:20:59.248Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
