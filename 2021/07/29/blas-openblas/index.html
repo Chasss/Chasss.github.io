@@ -15,7 +15,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://example.com/images/blas-openblas/20210127110525284.png">
 <meta property="article:published_time" content="2021-07-29T07:52:19.000Z">
-<meta property="article:modified_time" content="2021-08-02T07:05:53.309Z">
+<meta property="article:modified_time" content="2022-03-04T16:24:34.136Z">
 <meta property="article:author" content="Chas">
 <meta property="article:tag" content="深度学习">
 <meta property="article:tag" content="BLAS">
@@ -102,6 +102,8 @@
         <h2 id="源码目录"><a href="#源码目录" class="headerlink" title="源码目录"></a>源码目录</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">OpenBLAS/  </span><br><span class="line">├── benchmark      Benchmark codes for BLAS</span><br><span class="line">├── cmake          CMakefiles</span><br><span class="line">├── ctest          Test codes for CBLAS interfaces</span><br><span class="line">├── driver         Implemented in C</span><br><span class="line">│   ├── level2</span><br><span class="line">│   ├── level3</span><br><span class="line">│   └── others     Memory management, threading, etc</span><br><span class="line">├── exports        Generate shared library</span><br><span class="line">├── interface      Implement BLAS and CBLAS interfaces (callinkernel)</span><br><span class="line">│   ├── lapack</span><br><span class="line">│   └── netlib</span><br><span class="line">├── kernel         Optimized assembly kernels for CPU architectures</span><br><span class="line">│   ├── arm64</span><br><span class="line">│   ├── generic    General kernel codes written in plain C.</span><br><span class="line">│   ├── mips</span><br><span class="line">│   ├── x86_64</span><br><span class="line">│   └── ...  </span><br><span class="line">├── lapack          Optimized LAPACK codes (replacing those iPACK)</span><br><span class="line">│   ├── getf2</span><br><span class="line">│   └── ...</span><br><span class="line">├── lapack-netlib   LAPACK codes from netlib reference implementation</span><br><span class="line">├── reference       BLAS Fortran reference implementation (unused)</span><br><span class="line">├── relapack        Elmar Peise&#x27;s recursive LAPACK (implementeregular LAPACK)</span><br><span class="line">├── test            Test codes for BLAS</span><br><span class="line">└── utest           Regression test</span><br></pre></td></tr></table></figure>
 
 <p>BLAS 相关的源码在 <code>driver, interface, kernel</code> 三个目录下</p>
+<span id="more"></span>
+
 <h2 id="软件层次"><a href="#软件层次" class="headerlink" title="软件层次"></a>软件层次</h2><p>如上面的源码路径，分为三个层次，分别是 Interface, driver, kernel 层。如下图。</p>
 <p>Interface 层的主要作用是根据接口的参数，指定要执行的分支，如我们上图中的例子，走的是 dgemm_nn，即数据是 double 类型，矩阵都不转置。</p>
 <p>Driver 层的作用是具体实现，比如 gemm 的 driver 层就是矩阵乘法，由于要实现一个高效率的矩阵乘法，不会只是简单的三层 for 循环就解决了。这一层会做一些任务切分，数据重排，以达到多核并行以及高效利用 cache 来提升 CPU 利用率的目的。</p>
@@ -117,7 +119,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/07/29/blas-openblas/" data-id="cku17tf0t000444um8twy8oo1" data-title="深度学习计算库2-OpenBLAS矩阵乘法阅读" class="article-share-link">Share</a>
+      <a data-url="http://example.com/2021/07/29/blas-openblas/" data-id="cl0cmntth0003h4um80xh2ly8" data-title="深度学习计算库2-OpenBLAS矩阵乘法阅读" class="article-share-link">Share</a>
       
       
       
@@ -128,15 +130,6 @@
   
     
 <nav id="article-nav">
-  
-    <a href="/2021/08/02/my/mkl-dnn/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          (no title)
-        
-      </div>
-    </a>
   
   
     <a href="/2021/07/26/blas-lib/" id="article-nav-older" class="article-nav-link-wrap">
@@ -161,7 +154,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/BLAS/" rel="tag">BLAS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag">深度学习</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/BLAS/" rel="tag">BLAS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag">深度学习</a></li></ul>
     </div>
   </div>
 
@@ -171,7 +164,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/BLAS/" style="font-size: 10px;">BLAS</a> <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" style="font-size: 20px;">深度学习</a>
+      <a href="/tags/BLAS/" style="font-size: 15px;">BLAS</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" style="font-size: 20px;">深度学习</a>
     </div>
   </div>
 
@@ -180,7 +173,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li></ul>
     </div>
   </div>
 
@@ -193,23 +186,23 @@
       <ul>
         
           <li>
-            <a href="/2021/08/03/my/oneMKL/">(no title)</a>
-          </li>
-        
-          <li>
-            <a href="/2021/08/02/my/cudnn/">(no title)</a>
-          </li>
-        
-          <li>
-            <a href="/2021/08/02/my/mkl-dnn/">(no title)</a>
-          </li>
-        
-          <li>
             <a href="/2021/07/29/blas-openblas/">深度学习计算库2-OpenBLAS矩阵乘法阅读</a>
           </li>
         
           <li>
             <a href="/2021/07/26/blas-lib/">深度学习计算库1-概览</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/15/mkl-dnn/">MKL-DNN(oneDNN)中的卷积计算</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/05/caffe-source-code2/">Caffe源码阅读2-conv layer forward</a>
+          </li>
+        
+          <li>
+            <a href="/2021/06/20/caffe-source-code1/">Caffe源码阅读1-基本代码结构总览</a>
           </li>
         
       </ul>
@@ -225,7 +218,7 @@
   <div class="outer">
     <div id="footer-info" class="inner">
       
-      &copy; 2021 Chas<br>
+      &copy; 2022 Chas<br>
       Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>

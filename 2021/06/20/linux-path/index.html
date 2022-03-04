@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Linux patch的使用 | Living in the Current</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Linux patchdiff12345678NAME       diff - compare files line by lineSYNOPSIS       diff [OPTION]... FILES              FILES are &amp;#x27;FILE1 FILE2&amp;#x27; or &amp;#x27;DIR1 DIR2&amp;#x27; or &amp;#x27;DIR FILE&amp;#x27;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux patch的使用">
+<meta property="og:url" content="http://example.com/2021/06/20/linux-path/index.html">
+<meta property="og:site_name" content="Living in the Current">
+<meta property="og:description" content="Linux patchdiff12345678NAME       diff - compare files line by lineSYNOPSIS       diff [OPTION]... FILES              FILES are &amp;#x27;FILE1 FILE2&amp;#x27; or &amp;#x27;DIR1 DIR2&amp;#x27; or &amp;#x27;DIR FILE&amp;#x27;">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-06-20T06:30:28.000Z">
+<meta property="article:modified_time" content="2022-03-04T16:24:35.895Z">
+<meta property="article:author" content="Chas">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Living in the Current" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Living in the Current</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-linux-path" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2021/06/20/linux-path/" class="article-date">
+  <time class="dt-published" datetime="2021-06-20T06:30:28.000Z" itemprop="datePublished">2021-06-20</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Linux patch的使用
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h1 id="Linux-patch"><a href="#Linux-patch" class="headerlink" title="Linux patch"></a>Linux patch</h1><h2 id="diff"><a href="#diff" class="headerlink" title="diff"></a>diff</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">NAME</span><br><span class="line">       diff - compare files line by line</span><br><span class="line"></span><br><span class="line">SYNOPSIS</span><br><span class="line">       diff [OPTION]... FILES</span><br><span class="line">       </span><br><span class="line">       FILES are <span class="string">&#x27;FILE1 FILE2&#x27;</span> or <span class="string">&#x27;DIR1 DIR2&#x27;</span> or <span class="string">&#x27;DIR FILE&#x27;</span> or <span class="string">&#x27;FILE DIR&#x27;</span>.  If --from-file or --to-file  is  given, there are no restrictions on FILE(s).If a FILE is <span class="string">&#x27;-&#x27;</span>, <span class="built_in">read</span> standard input. Exit status is 0 <span class="keyword">if</span> inputs are the same, 1 <span class="keyword">if</span> different, 2 <span class="keyword">if</span> trouble.</span><br></pre></td></tr></table></figure>
+
+<p>diff的功能就是用来比较两个文件的不同，然后记录下来，也就是所谓的diff补丁。语法格式：diff [选项] 源文件（夹） 目的文件（夹），就是要给源文件（夹）打个补丁，使之变成目的文件（夹）。下面介绍三个最为常用选项：</p>
+<p>  <code>-r</code> 是一个递归选项，设置了这个选项，diff会将两个不同版本源代码目录中的所有对应文件全部都进行一次比较，包括子目录文件。<br>  <code>-N</code> 选项确保补丁文件将正确地处理已经创建或删除文件的情况。<br> <code> -u</code> 选项以统一格式创建补丁文件，这种格式比缺省格式更紧凑些。</p>
+<span id="more"></span>
+
+<h2 id="patch"><a href="#patch" class="headerlink" title="patch"></a>patch</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">NAME</span><br><span class="line">       patch - apply a diff file to an original</span><br><span class="line"></span><br><span class="line">SYNOPSIS</span><br><span class="line">       patch [options] [originalfile [patchfile]]</span><br><span class="line">       </span><br><span class="line">       but usually just</span><br><span class="line">       </span><br><span class="line">       patch -pnum &lt;patchfile</span><br></pre></td></tr></table></figure>
+
+<p>patch就是利用diff制作的补丁来实现源文件（夹）和目的文件（夹）的转换。这样说就意味着你可以有源文件（夹）――&gt;目的文件（夹），也可以目的文件（夹）――&gt;源文件（夹）。</p>
+<p>常用选项：</p>
+<p><code>-i</code> 指定补丁文件</p>
+<p><code>-pNum</code> 在 <code>diff</code> 生成的补丁中，第一二行是文件信息，其中文件名是可以包含路径的，例如 <code>--- tmp/test1 2018-05-12 18:39:41.508375114 +0800</code> 其中 <code>-p0</code> 代表完整的路径 <code>tmp/test1</code>，而 <code>-p1</code> 则指 <code>test1</code>，<code>-pN</code> 依此类推</p>
+<p><code>-E</code> 删除应用补丁后为空文件的文件</p>
+<p><code>-o</code> 输出到一个文件而不是直接覆盖文件</p>
+<p><code>-R</code> Reverse颠倒，将修改后的文件转为修改前的文件，也可以理解为还原</p>
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><h3 id="单文件"><a href="#单文件" class="headerlink" title="单文件"></a>单文件</h3><p>例如有两个文件test0.c test1.c，要将test0.c修改为test1.c</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">cat test0.c</span><br><span class="line">a=1;</span><br><span class="line">b=2;</span><br><span class="line">c=3;</span><br><span class="line">cat test1.c</span><br><span class="line">a=2;</span><br><span class="line">b=2;</span><br><span class="line">c=1;</span><br></pre></td></tr></table></figure>
+
+<p>用diff生成补丁文件</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">diff -uN test0.c test1.c &gt; ptest.patch</span><br></pre></td></tr></table></figure>
+
+<p>查看生成文件的内容以及格式</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">more ptest.patch</span><br><span class="line">--- test0.c	2021-08-27 02:31:15.264661793 -0400</span><br><span class="line">+++ test1.c	2021-08-27 02:31:26.556643967 -0400</span><br><span class="line">@@ -1,3 +1,3 @@</span><br><span class="line">-a=1;</span><br><span class="line">+a=2;</span><br><span class="line"> b=2;</span><br><span class="line">-c=3;</span><br><span class="line">+c=1;</span><br></pre></td></tr></table></figure>
+
+<p>前2行<code>---</code> 开头为改变前的文件，<code>+++</code> 开头为更新后的文件。</p>
+<p>第3行为上下文描述快，其中 <code>-1,3</code> 为旧文件的 3 行上下文，<code>+1,3</code> 为新文件的。</p>
+<p>具体到块中的内容，前面有 <code>-</code> 号的则为删除，有 <code>+</code> 号为新增，不带符号则未做改变，仅仅是上下文输出。</p>
+<p>打patch</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">patch test0.c &lt; ptest.patch</span><br></pre></td></tr></table></figure>
+
+<p>查看修改后的文件</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cat test0.c</span><br><span class="line">a=2;</span><br><span class="line">b=2;</span><br><span class="line">c=1</span><br></pre></td></tr></table></figure>
+
+<h3 id="多文件-文件夹"><a href="#多文件-文件夹" class="headerlink" title="多文件(文件夹)"></a>多文件(文件夹)</h3><p>例如有两个文件夹test0  test1</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">test0</span><br><span class="line">--test0.c</span><br><span class="line">--test1.c</span><br><span class="line"></span><br><span class="line">test1</span><br><span class="line">--test0.c</span><br><span class="line">--test1.c</span><br><span class="line">--test2.c</span><br></pre></td></tr></table></figure>
+
+<p>其中，test0.c相同，test1.c不同，test2.c新增,文件内容如下</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">cat test0/test0.c</span><br><span class="line">a=1;</span><br><span class="line">b=2;</span><br><span class="line">c=3;</span><br><span class="line">cat test0/test1.c</span><br><span class="line">a=2;</span><br><span class="line">b=2;</span><br><span class="line">c=1;</span><br><span class="line"></span><br><span class="line">cat test1/test0.c</span><br><span class="line">a=1;</span><br><span class="line">b=2;</span><br><span class="line">c=3;</span><br><span class="line">cat test1/test1.c</span><br><span class="line">a=1;</span><br><span class="line">b=2;</span><br><span class="line">c=3;</span><br><span class="line">cat test1/test2.c</span><br><span class="line">a=1;</span><br><span class="line">b=2;</span><br><span class="line">c=3;</span><br></pre></td></tr></table></figure>
+
+<p>用diff生成补丁文件</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">diff -urN test0 test1 &gt; test.patch</span><br></pre></td></tr></table></figure>
+
+<p>查看内容以及格式</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">cat test.patch</span><br><span class="line">diff -urN test0/test1.c test1/test1.c</span><br><span class="line">--- test0/test1.c	2021-08-27 05:46:38.749213974 -0400</span><br><span class="line">+++ test1/test1.c	2021-08-27 04:44:30.618269067 -0400</span><br><span class="line">@@ -1,3 +1,3 @@</span><br><span class="line">-a=2;</span><br><span class="line">+a=1;</span><br><span class="line"> b=2;</span><br><span class="line">-c=1;</span><br><span class="line">+c=3;</span><br><span class="line">diff -urN test0/test2.c test1/test2.c</span><br><span class="line">--- test0/test2.c	1969-12-31 19:00:00.000000000 -0500</span><br><span class="line">+++ test1/test2.c	2021-08-27 04:44:30.618269000 -0400</span><br><span class="line">@@ -0,0 +1,3 @@</span><br><span class="line">+a=1;</span><br><span class="line">+b=2;</span><br><span class="line">+c=3;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>若直接在当前路径下(该路径下有test0以及test1文件夹) patch</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">patch -p0 &lt; test.patch</span><br><span class="line">patching file test0/test1.c</span><br><span class="line">The next patch would create the file test1/test2.c,</span><br><span class="line"><span class="built_in">which</span> already exists!  Assume -R? [n] </span><br></pre></td></tr></table></figure>
+
+<p>test1.c覆盖正常，但test2.c新增却显示test1/test2.c已存在</p>
+<p>可见，用文件B覆盖文件A，即使文件名带路径也没问题</p>
+<p>但要新建文件C，如果带路径，会按照其路径去新建，不能达到我们本来的修改目的。</p>
+<p>而且这种情况下若使用-R选项，还会把test1/test2.c删除。</p>
+<p>当需要新增/删除文件时，若带有路径则需要注意这一点</p>
+<p>另一种方式：</p>
+<p>移动到要修改的文件夹(test0) 下patch，使用选项-p1(忽略掉第一级目录)</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> test0</span><br><span class="line">patch -p1 &lt; ../test.patch</span><br><span class="line">patching file test1.c</span><br><span class="line">patching file test2.c</span><br></pre></td></tr></table></figure>
+
+<p>则成功patch了。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/06/20/linux-path/" data-id="cl0cmnttm000ah4um96k6dlrn" data-title="Linux patch的使用" class="article-share-link">Share</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/06/20/caffe-source-code1/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Caffe源码阅读1-基本代码结构总览
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/06/15/caffe-env/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Caffe win10+VS2019环境配置及python接口配置</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/BLAS/" rel="tag">BLAS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag">深度学习</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/BLAS/" style="font-size: 15px;">BLAS</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" style="font-size: 20px;">深度学习</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2021/07/29/blas-openblas/">深度学习计算库2-OpenBLAS矩阵乘法阅读</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/26/blas-lib/">深度学习计算库1-概览</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/15/mkl-dnn/">MKL-DNN(oneDNN)中的卷积计算</a>
+          </li>
+        
+          <li>
+            <a href="/2021/07/05/caffe-source-code2/">Caffe源码阅读2-conv layer forward</a>
+          </li>
+        
+          <li>
+            <a href="/2021/06/20/caffe-source-code1/">Caffe源码阅读1-基本代码结构总览</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2022 Chas<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
